@@ -49,20 +49,28 @@
     validateForm(formReviewText, formReviewFieldsText);
   };
 
+  var calculateDateExpire = function () {
+    var dateCurrent = new Date();
+    var dateBirthday = new Date(dateCurrent.getFullYear(), 8, 25);
+    var dateBirthdayDelta = dateCurrent - dateBirthday;
+    if (+dateBirthdayDelta<0) {
+      dateBirthdayDelta = 31536000000 + dateBirthdayDelta;
+    }
+    var dateExpire = new Date(+dateCurrent + +dateBirthdayDelta);
+    return dateExpire;
+  };
+
   formElement.onsubmit = function(evt) {
     evt.preventDefault();
-    console.log(formReviewMark);
     for (var i = 0; i < formReviewMark.length; i++) {
       // Достаточно ли будет проверки на наличие свойства с учетом того, что атрибут булевый или нужно еще проверять на значение свойства равное true?
       if (formReviewMark[i].checked) {
         docCookies.removeItem('review-mark');
-        docCookies.setItem('review-mark',formReviewMark[i].value);
-        console.log('review-mark' + formReviewMark[i].value);
+        docCookies.setItem('review-mark',formReviewMark[i].value, calculateDateExpire());
       }
     }
     docCookies.removeItem('review-name');
-    docCookies.setItem('review-name', formReviewName.value);
-    console.log('review-name', formReviewName.value);
+    docCookies.setItem('review-name', formReviewName.value, calculateDateExpire());
     if (formReviewFieldsName.isVisible && formReviewFieldsText.isVisible)   {
       formElement.submit();
     }
