@@ -44,6 +44,7 @@
   };
 
   // oninput в следующих двух записях WebStorm подчеркивает и выдает сообщение Typo: In word 'oninput', с onclick, который использовался выше такого нет, при этом все работает, событие обрабатывается. Что именно не так, почему WebStorm выдает предупреждение?
+
   formReviewName.oninput = function(evt) {
     evt.preventDefault();
     validateForm(formReviewName, formReviewFieldsName);
@@ -85,6 +86,29 @@
     {
       alert('Не все поля формы заполнены');
     }
+  };
+
+  var setCookiesValue = function () {
+
+    var cookieNameValue = docCookies.getItem('review-name');
+    if (cookieNameValue) {
+      formReviewName.value = cookieNameValue;
+      validateForm(formReviewName, formReviewFieldsName);
+    }
+    
+    var cookieMarkValue = docCookies.getItem('review-mark');
+    if (cookieMarkValue) {
+      for (var i = 0; i < formReviewMark.length; i++) {
+        formReviewMark[i].removeAttribute('checked');
+        if (cookieMarkValue === formReviewMark[i].value) {
+          formReviewMark[i].setAttribute('checked', 'true');
+        }
+      }
+    }
+  };
+
+  document.body.onload = function() {
+    setCookiesValue();
   };
 
 })();
