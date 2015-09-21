@@ -10,8 +10,11 @@
   var formReviewFields = document.querySelector('.review-fields');
   var formReviewFieldsName = document.querySelector('.review-fields-name');
   var formReviewFieldsText = document.querySelector('.review-fields-text');
+  // Добавила по одному дополнительному свойству в объекты, хранящие инпуты формы. Изначально до введения отдельной функции на валидацию формы были просто новые переменные-флаги, отвечающие за состояние, но потом при вынесении функционала в функцию, пришлось воспольщоваться именно дополнительными свойствами объектом. Можно ли так делать или могут быть какие-то побочные эффекты и лучше делать по-другому?
   formReviewFieldsName.isVisible = 0;
   formReviewFieldsText.isVisible = 0;
+
+  // Изначально в файле в начале были объявлены переменные, уже дальше шел код. В итоге так у меня тоже основная масса переменных объявляется в начале, это правильно с точки зрения структуры и доступности кода?
 
   formOpenButton.onclick = function(evt) {
     evt.preventDefault();
@@ -23,6 +26,7 @@
     formContainer.classList.add('invisible');
   };
 
+  // Вынесла проверку формы на предмет заполненности полей в отдельную функцию. Изначально было просто два обработчика полей oninput, в них свой код, он показался однотипным решила вынести. Насколько это оправдано, и в итогое оптимальный ли вариант получился или можно что-то улучшить?
   var validateForm = function(formReviewInput, formReviewInputLabel) {
     if (formReviewInput.value) {
       formReviewInputLabel.classList.add('invisible');
@@ -39,6 +43,7 @@
     }
   };
 
+  // oninput в следующих двух записях WebStorm подчеркивает и выдает сообщение Typo: In word 'oninput', с onclick, который использовался выше такого нет, при этом все работает, событие обрабатывается. Что именно не так, почему WebStorm выдает предупреждение?
   formReviewName.oninput = function(evt) {
     evt.preventDefault();
     validateForm(formReviewName, formReviewFieldsName);
@@ -49,6 +54,7 @@
     validateForm(formReviewText, formReviewFieldsText);
   };
 
+  //Вопрос по структуре кода, у меня идет большой блок с лбъявлением переменны, потом в куче намешаны обработчики событий и вспомогательные функции, как их правильнее располагать?
   var calculateDateExpire = function () {
     var dateCurrent = new Date();
     var dateBirthday = new Date(dateCurrent.getFullYear(), 8, 25);
@@ -71,6 +77,7 @@
     }
     docCookies.removeItem('review-name');
     docCookies.setItem('review-name', formReviewName.value, calculateDateExpire());
+    // По заданию не очень было понятно, что входит в валидацию, в вебинаре рассматривался вариант исключительно с использованием новых атрибутов HTML5, тут в таком случае достаточно было добавить атрибуты required для инпутов, а на JS реализовать только дополнительное визуальное отображение названий незаполненных полей. Добавила предупреждение через alert на случай, если браузер не поддреживает атрибут required. Не знаю, на сколько такой вариант рабочий.
     if (formReviewFieldsName.isVisible && formReviewFieldsText.isVisible)   {
       formElement.submit();
     }

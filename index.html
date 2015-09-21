@@ -76,6 +76,8 @@
 </main>
 
 <div class="overlay-container invisible">
+
+  <!-- Добавила форме id, чтобы можно было выбрать ее с помощью  var formElement = document.forms['review-form']; Это правильно или предполагалось, что нужно пользоваться каким-то другим способом с учетом имеющихся атрибутов?-->
   <form class="overlay review-form" id="review-form" action="index.html" method="post">
     <h2 class="review-form-title">Оставить отзыв</h2>
     <span class="review-form-close">&times;</span>
@@ -111,6 +113,5 @@
 </div>
 <script src="js/cookies.js"></script>
 <script src="js/form.js"></script>
-
 </body>
 </html>
