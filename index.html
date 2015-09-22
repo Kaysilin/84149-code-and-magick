@@ -2,7 +2,8 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <link rel="stylesheet" href="/css/main.css" media="screen" title="no title" charset="utf-8">
+  <link href='https://fonts.googleapis.com/css?family=PT+Mono&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="css/main.css" media="screen" title="no title" charset="utf-8">
   <title>Code and Magick</title>
 </head>
 <body>
@@ -20,9 +21,7 @@
     Вместе с ним вас ждет увлекательное приключение&hellip;
   </p>
 
-  <div class="demo">
-
-  </div>
+  <div class="demo"></div>
 </header>
 
 <main>
@@ -47,21 +46,7 @@
       <input type="radio" name="reviews" id="reviews-popular" value="reviews-popular"><label for="reviews-popular" class="reviews-filter-item"> Популярные</label>
     </form>
 
-    <div class="reviews-list">
-      <article class="review">
-        <img src="img/user-1.jpg" class="review-author" alt="Неопознанный енот" />
-        <span class="review-rating review-rating-three"></span>
-        <p class="review-text">
-          Игра очень интересная. Нравится возможность выбирать между героями, а самое крутое,
-          что есть альтернативные концовки в игре. Она точно стоит своих денег.
-        </p>
-        <div class="review-quiz">
-          Полезный отзыв?
-          <span class="review-quiz-answer">Да</span>
-          <span class="review-quiz-answer">Нет</span>
-        </div>
-      </article>
-    </div>
+    <div class="reviews-list"></div>
 
     <div class="reviews-controls">
       <span class="reviews-controls-item reviews-controls-more invisible">Еще отзывы</span>
@@ -82,11 +67,11 @@
 
     <fieldset class="review-form-group review-form-group-mark">
       <span class="review-form-label">Оценка</label><br>
-      <input type="radio" name="review-mark" id="review-mark-5" value="5"><label class="review-mark-label review-mark-label-5" for="review-mark-5">1</label>
-      <input type="radio" name="review-mark" id="review-mark-4" value="4"><label class="review-mark-label review-mark-label-4" for="review-mark-4">2</label>
+      <input type="radio" name="review-mark" id="review-mark-1" value="1"><label class="review-mark-label review-mark-label-1" for="review-mark-2">1</label>
+      <input type="radio" name="review-mark" id="review-mark-2" value="2"><label class="review-mark-label review-mark-label-2" for="review-mark-2">2</label>
       <input type="radio" name="review-mark" id="review-mark-3" value="3" checked><label class="review-mark-label review-mark-label-3" for="review-mark-3">3</label>
-      <input type="radio" name="review-mark" id="review-mark-2" value="2"><label class="review-mark-label review-mark-label-2" for="review-mark-2">4</label>
-      <input type="radio" name="review-mark" id="review-mark-1" value="1"><label class="review-mark-label review-mark-label-1" for="review-mark-1">5</label>
+      <input type="radio" name="review-mark" id="review-mark-4" value="4"><label class="review-mark-label review-mark-label-4" for="review-mark-4">4</label>
+      <input type="radio" name="review-mark" id="review-mark-5" value="5"><label class="review-mark-label review-mark-label-5" for="review-mark-5">5</label>
     </fieldset>
 
     <fieldset class="review-form-group">
@@ -109,6 +94,19 @@
     </div>
   </form>
 </div>
+
+<template id="review-template">
+  <article class="review">
+    <img src="" class="review-author" alt="" title="" />
+    <span class="review-rating"></span>
+    <p class="review-text"></p>
+    <div class="review-quiz">
+      Полезный отзыв?
+      <span class="review-quiz-answer">Да</span>
+      <span class="review-quiz-answer">Нет</span>
+    </div>
+  </article>
+</template>
 
 <script src="js/form.js"></script>
 
