@@ -341,3 +341,8 @@ input[type=radio]:checked + .review-mark-label {
   cursor: pointer;
   text-decoration: underline;
 }
+
+input:invalid,
+textarea:invalid {
+  outline: 2px solid #da641a;
+}
