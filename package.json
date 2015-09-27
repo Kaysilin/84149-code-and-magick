@@ -1,0 +1,25 @@
+{
+  "name": "84149-code-and-magick",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Обучающий проект «code-and-magick» от HTML Academy",
+  "author": "Юлия К.",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/js-htmlacademy/84149-code-and-magick.git"
+  },
+  "bugs": {
+    "url": "https://github.com/js-htmlacademy/84149-code-and-magick/issues"
+  },
+  "homepage": "https://github.com/js-htmlacademy/84149-code-and-magick",
+  "devDependencies": {
+    "eslint": "1.5.1"
+  },
+  "scripts": {
+    "gosha": "make",
+    "test": "eslint js/"
+  },
+  "engines": {
+    "node": "^0.12.7"
+  }
+}
