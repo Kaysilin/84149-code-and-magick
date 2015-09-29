@@ -65,6 +65,8 @@
 
     if (reviews) {
       var reviewRatingClassName = {
+        '': 'review-rating-none',
+        '0': 'review-rating-none',
         '1': 'review-rating-one',
         '2': 'review-rating-two',
         '3': 'review-rating-three',
@@ -87,7 +89,7 @@
 
           reviewImage.src = review['author']['picture'];
 
-          var imageLoadTimeout = setTimeout(function () {
+          var imageLoadTimeout = setTimeout(function() {
             newReviewElement.classList.add('review-load-failure');
           }, REQUEST_FAILURE_TIMEOUT);
 
@@ -97,7 +99,7 @@
             reviewImage.alt = review['author']['name'];
             reviewImage.title = review['author']['name'];
             reviewImage.height = reviewImage.width = '124';
-            newReviewElement.replaceChild(reviewImage, newReviewElement.childNodes[1]);
+            newReviewElement.replaceChild(reviewImage, newReviewElement.querySelector('img'));
           };
 
           reviewImage.onerror = function () {
@@ -166,11 +168,11 @@
 
       case 'reviews-bad':
         filteredReviews = filteredReviews.sort(function(a, b) {
-          if (a.rating < b.rating) {
+          if ((a.rating < b.rating) || (b.rating == false)) {
             return -1;
           }
 
-          if (a.rating > b.rating) {
+          if ((a.rating > b.rating) || (a.rating == false)) {
             return 1;
           }
 
