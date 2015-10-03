@@ -61,8 +61,6 @@
 </main>
 
 <div class="overlay-container invisible">
-
-  <!-- Добавила форме id, чтобы можно было выбрать ее с помощью  var formElement = document.forms['review-form']; Это правильно или предполагалось, что нужно пользоваться каким-то другим способом с учетом имеющихся атрибутов?-->
   <form class="overlay review-form" id="review-form" action="index.html" method="post">
     <h2 class="review-form-title">Оставить отзыв</h2>
     <span class="review-form-close">&times;</span>
@@ -95,6 +93,17 @@
       </div>
     </div>
   </form>
+</div>
+
+<div class="overlay-gallery invisible">
+  <span class="overlay-gallery-close">&times;</span>
+  <div class="overlay-gallery-controls">
+    <div class="overlay-gallery-control overlay-gallery-control-left"></div>
+    <div class="overlay-gallery-preview">
+      <div class="overlay-gallery-preview-number"><span class="preview-number-current">1</span> из <span class="preview-number-total">5</span></div>
+    </div>
+    <div class="overlay-gallery-control overlay-gallery-control-right"></div>
+  </div>
 </div>
 
 
