@@ -302,7 +302,8 @@ footer p {
   padding-bottom: 20px;
 }
 
-.overlay-container {
+.overlay-container,
+.overlay-gallery {
   background: rgba(0, 0, 0, 0.8);
   bottom: 0;
   left: 0;
@@ -310,6 +311,7 @@ footer p {
   position: fixed;
   right: 0;
   top: 0;
+  z-index: 1;
 }
 
 .review-form {
@@ -325,6 +327,7 @@ footer p {
   text-align: left;
 }
 
+.overlay-gallery-close,
 .review-form-close {
   cursor: pointer;
   font-size: 45px;
@@ -408,7 +411,41 @@ input[type=radio]:checked + .review-mark-label {
   text-decoration: underline;
 }
 
-input:invalid,
-textarea:invalid {
-  outline: 2px solid #da641a;
+.overlay-gallery {
+  text-align: center;
+}
+
+.overlay-gallery-controls {
+  margin: 100px 0;
+}
+
+.overlay-gallery-control {
+  background: url('../img/arrows-sprite.png') no-repeat;
+  cursor: pointer;
+  display: inline-block;
+  height: 46px;
+  vertical-align: middle;
+  width: 30px;
+}
+
+.overlay-gallery-control-right {
+  background-position: -30px 0;
+}
+
+.overlay-gallery-preview {
+  border: dotted 1px rgba(255, 255, 255, 0.2);
+  display: inline-block;
+  min-height: 300px;
+  min-width: 300px;
+  position: relative;
+  vertical-align: middle;
+}
+
+.overlay-gallery-preview-number {
+  color: #fff;
+  font-size: 14px;
+  font-weight: bold;
+  left: 0;
+  position: absolute;
+  top: -1.5em;
 }

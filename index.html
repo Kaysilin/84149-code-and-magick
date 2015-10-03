@@ -61,15 +61,13 @@
 </main>
 
 <div class="overlay-container invisible">
-
-  <!-- Добавила форме id, чтобы можно было выбрать ее с помощью  var formElement = document.forms['review-form']; Это правильно или предполагалось, что нужно пользоваться каким-то другим способом с учетом имеющихся атрибутов?-->
-  <form class="overlay review-form" id="review-form" action="index.html" method="post">
+  <form class="overlay review-form" action="index.html" method="post">
     <h2 class="review-form-title">Оставить отзыв</h2>
     <span class="review-form-close">&times;</span>
 
     <fieldset class="review-form-group review-form-group-mark">
-      <span class="review-form-label">Оценка</span><br>
-      <input type="radio" name="review-mark" id="review-mark-1" value="1"><label class="review-mark-label review-mark-label-1" for="review-mark-1">1</label>
+      <span class="review-form-label">Оценка</label><br>
+      <input type="radio" name="review-mark" id="review-mark-1" value="1"><label class="review-mark-label review-mark-label-1" for="review-mark-2">1</label>
       <input type="radio" name="review-mark" id="review-mark-2" value="2"><label class="review-mark-label review-mark-label-2" for="review-mark-2">2</label>
       <input type="radio" name="review-mark" id="review-mark-3" value="3" checked><label class="review-mark-label review-mark-label-3" for="review-mark-3">3</label>
       <input type="radio" name="review-mark" id="review-mark-4" value="4"><label class="review-mark-label review-mark-label-4" for="review-mark-4">4</label>
@@ -78,12 +76,12 @@
 
     <fieldset class="review-form-group">
       <label for="review-name" class="review-form-label">Имя</label><br>
-      <input type="text" name="review-name" id="review-name" class="review-form-field review-form-field-name" required>
+      <input type="text" name="review-name" id="review-name" class="review-form-field review-form-field-name">
     </fieldset>
 
     <fieldset class="review-form-group">
       <label for="review-text" class="review-form-label">Отзыв</label><br>
-      <textarea name="review-text" id="review-text" class="review-form-field review-form-field-text" cols="32" rows="8" required></textarea>
+      <textarea name="review-text" id="review-text" class="review-form-field review-form-field-text" cols="32" rows="8"></textarea>
     </fieldset>
 
     <div class="review-form-controls">
@@ -95,6 +93,17 @@
       </div>
     </div>
   </form>
+</div>
+
+<div class="overlay-gallery invisible">
+  <span class="overlay-gallery-close">&times;</span>
+  <div class="overlay-gallery-controls">
+    <div class="overlay-gallery-control overlay-gallery-control-left"></div>
+    <div class="overlay-gallery-preview">
+      <div class="overlay-gallery-preview-number"><span class="preview-number-current">1</span> из <span class="preview-number-total">5</span></div>
+    </div>
+    <div class="overlay-gallery-control overlay-gallery-control-right"></div>
+  </div>
 </div>
 
 
@@ -110,9 +119,8 @@
     </div>
   </article>
 </template>
-<script src="js/cookies.js"></script>
+
 <script src="js/form.js"></script>
-<script src="data/reviews.js"></script>
-<script src="js/reviews.js"></script>
+
 </body>
 </html>
