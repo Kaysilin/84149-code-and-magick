@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 (function() {
 
@@ -40,10 +40,11 @@
 
         case ReadyState.DONE:
         default:
-          if (loadedXhr.status == 200) {
+          if (loadedXhr.status === 200) {
             var data = loadedXhr.response;
             reviewsContainer.classList.remove('reviews-list-loading');
-            callback(JSON.parse(data));
+            return ( callback(JSON.parse(data)) );
+            // eslint требует скомбинировать callback с return
           }
 
           if (loadedXhr.status > 400) {
@@ -55,71 +56,69 @@
 
     xhr.ontimeout = function() {
       showLoadFailure();
-    }
+    };
   }
 
-  function renderReviews(reviews) {
+  function renderReviews(reviewsAll) {
 
     reviewsFilter.classList.add('invisible');
     reviewsContainer.innerHTML = '';
 
-    if (reviews) {
-      var reviewRatingClassName = {
-        '': 'review-rating-none',
-        '0': 'review-rating-none',
-        '1': 'review-rating-one',
-        '2': 'review-rating-two',
-        '3': 'review-rating-three',
-        '4': 'review-rating-four',
-        '5': 'review-rating-five'
-      };
+    var reviewRatingClassName = {
+      '': 'review-rating-none',
+      '0': 'review-rating-none',
+      '1': 'review-rating-one',
+      '2': 'review-rating-two',
+      '3': 'review-rating-three',
+      '4': 'review-rating-four',
+      '5': 'review-rating-five'
+    };
 
-      var reviewTemplate = document.getElementById('review-template');
-      var reviewsFragment = document.createDocumentFragment();
+    var reviewTemplate = document.getElementById('review-template');
+    var reviewsFragment = document.createDocumentFragment();
 
-      reviews.forEach(function (review) {
-        var newReviewElement = reviewTemplate.content.children[0].cloneNode(true);
+    reviewsAll.forEach(function(review) {
+      var newReviewElement = reviewTemplate.content.children[0].cloneNode(true);
 
-        newReviewElement.querySelector('.review-rating').classList.add(reviewRatingClassName[review['rating']]);
-        newReviewElement.querySelector('.review-text').textContent = review['description'];
+      newReviewElement.querySelector('.review-rating').classList.add(reviewRatingClassName[review['rating']]);
+      newReviewElement.querySelector('.review-text').textContent = review['description'];
 
-        if (review['author']['picture']) {
+      if (review['author']['picture']) {
 
-          var reviewImage = new Image();
+        var reviewImage = new Image();
 
-          reviewImage.src = review['author']['picture'];
+        reviewImage.src = review['author']['picture'];
 
-          var imageLoadTimeout = setTimeout(function() {
-            newReviewElement.classList.add('review-load-failure');
-          }, REQUEST_FAILURE_TIMEOUT);
+        var imageLoadTimeout = setTimeout(function() {
+          newReviewElement.classList.add('review-load-failure');
+        }, REQUEST_FAILURE_TIMEOUT);
 
-          reviewImage.onload = function () {
-            clearTimeout(imageLoadTimeout);
-            reviewImage.classList.add('review-author');
-            reviewImage.alt = review['author']['name'];
-            reviewImage.title = review['author']['name'];
-            reviewImage.height = reviewImage.width = '124';
-            newReviewElement.replaceChild(reviewImage, newReviewElement.querySelector('img'));
-          };
+        reviewImage.onload = function() {
+          clearTimeout(imageLoadTimeout);
+          reviewImage.classList.add('review-author');
+          reviewImage.alt = review['author']['name'];
+          reviewImage.title = review['author']['name'];
+          reviewImage.height = reviewImage.width = '124';
+          newReviewElement.replaceChild(reviewImage, newReviewElement.querySelector('img'));
+        };
 
-          reviewImage.onerror = function () {
-            newReviewElement.classList.add('review-load-failure');
-          };
-        }
+        reviewImage.onerror = function() {
+          newReviewElement.classList.add('review-load-failure');
+        };
+      }
 
-        reviewsFragment.appendChild(newReviewElement);
-      });
+      reviewsFragment.appendChild(newReviewElement);
+    });
 
-      reviewsContainer.appendChild(reviewsFragment);
-      reviewsFilter.classList.remove('invisible');
-    }
+    reviewsContainer.appendChild(reviewsFragment);
+    reviewsFilter.classList.remove('invisible');
   }
 
-  function filterReviews(reviews, filterID) {
-    var filteredReviews = reviews.slice(0);
+  function filterReviews(reviewsAll, filterID) {
+    var filteredReviews = reviewsAll.slice(0);
     switch (filterID) {
       case 'reviews-recent':
-        var HALF_YEAR_PERIOD = 365*24*60*60*1000/2;
+        var HALF_YEAR_PERIOD = 365 * 24 * 60 * 60 * 1000 / 2;
         filteredReviews = filteredReviews.sort(function(a, b) {
           var sortDateOne = new Date(a.date.replace(/-/g, ', '));
           var sortDateTwo = new Date(b.date.replace(/-/g, ', '));
@@ -136,7 +135,7 @@
             return 0;
           }
         });
-        filteredReviews = filteredReviews.filter(function(item){
+        filteredReviews = filteredReviews.filter(function(item) {
           var sortDate = new Date(item.date.replace(/-/g, ', '));
           var sortDateCurrent = new Date();
           if (sortDate > new Date(sortDateCurrent - HALF_YEAR_PERIOD)) {
@@ -159,7 +158,7 @@
             return 0;
           }
         });
-        filteredReviews = filteredReviews.filter(function(item){
+        filteredReviews = filteredReviews.filter(function(item) {
           if (+item.rating > 2) {
             return item;
           }
@@ -168,11 +167,11 @@
 
       case 'reviews-bad':
         filteredReviews = filteredReviews.sort(function(a, b) {
-          if ((a.rating < b.rating) || (b.rating == false)) {
+          if ((a.rating < b.rating) || (b.rating === 0)) {
             return -1;
           }
 
-          if ((a.rating > b.rating) || (a.rating == false)) {
+          if ((a.rating > b.rating) || (a.rating === 0)) {
             return 1;
           }
 
@@ -180,7 +179,7 @@
             return 0;
           }
         });
-        filteredReviews = filteredReviews.filter(function(item){
+        filteredReviews = filteredReviews.filter(function(item) {
           if (+item.rating < 3) {
             return item;
           }
@@ -205,24 +204,24 @@
         break;
 
       default:
-        filteredReviews = reviews.slice(0);
+        filteredReviews = reviewsAll.slice(0);
         break;
     }
 
     return filteredReviews;
   }
 
-  function initFilters() {
-    var filterElement = document.forms['reviews-filter']['reviews'];
-    console.log(filterElement.value);
-    document.forms['reviews-filter'].onclick = function (evt) {
-      setActiveFilter(evt.target.value);
-    }
-  }
-
   function setActiveFilter(filterId) {
     var filteredReviews = filterReviews(reviews, filterId);
     renderReviews(filteredReviews);
+  }
+
+  function initFilters() {
+    var filterElement = document.forms['reviews-filter']['reviews'];
+    console.log(filterElement.value);
+    document.forms['reviews-filter'].onclick = function(evt) {
+      setActiveFilter(evt.target.value);
+    };
   }
 
   initFilters();
@@ -232,4 +231,4 @@
     renderReviews(reviews);
     setActiveFilter('sort-hotels-default');
   });
-}) ();
+})();
