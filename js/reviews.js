@@ -240,6 +240,7 @@
 
   function initFilters() {
     var filtersContainer = document.forms['reviews-filter'];
+    filtersContainer['reviews'].value = localStorage.getItem('filterID');
     filtersContainer.addEventListener('click', function(evt) {
       if (evt.target.name === 'reviews') {
         setActiveFilter(evt.target.value);
@@ -252,20 +253,16 @@
   loadReviews(function(loadedReviews) {
     reviews = loadedReviews;
     currentReviews = reviews;
-    renderReviews(reviews, ++currentPage, true);
-    console.log('loadReviews currentPage =' + currentPage);
+    setActiveFilter(localStorage.getItem('filterID'));
   });
 
   function isNextPageAvailable() {
-    console.log('isNextPageAvailable currentPage =' + currentPage);
     return currentPage < Math.ceil(currentReviews.length / PAGE_LENGTH);
   }
 
   reviewsMore.addEventListener('click', function() {
     if (isNextPageAvailable()) {
-      console.log('addEventListener currentPage before =' + currentPage);
       renderReviews(currentReviews, ++currentPage, false);
-      console.log('addEventListener currentPage after =' + currentPage);
     }
   });
 })();
