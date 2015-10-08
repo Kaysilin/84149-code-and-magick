@@ -225,10 +225,10 @@ input[type=radio]:checked + .reviews-filter-item {
   background: url('../img/icon-star.png') top left repeat-x;
   display: block;
   height: 30px;
-  width: 30px;
+  width: 0;
 }
-
-.review-rating-one {  }
+.review-rating-none { }
+.review-rating-one { width: 30px; }
 .review-rating-two { width: 60px; }
 .review-rating-three { width: 90px; }
 .review-rating-four { width: 120px; }
@@ -409,6 +409,11 @@ input[type=radio]:checked + .review-mark-label {
 .review-fields-label {
   cursor: pointer;
   text-decoration: underline;
+}
+
+input:invalid,
+textarea:invalid {
+  outline: 2px solid #da641a;
 }
 
 .overlay-gallery {
