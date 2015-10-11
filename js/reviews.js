@@ -48,8 +48,7 @@
           if (loadedXhr.status === 200) {
             var data = loadedXhr.response;
             reviewsContainer.classList.remove('reviews-list-loading');
-            return ( callback(JSON.parse(data)) );
-            // eslint требует скомбинировать callback с return
+            return callback(JSON.parse(data));
           }
 
           if (loadedXhr.status > 400) {
@@ -140,6 +139,13 @@
     switch (filterID) {
       case 'reviews-recent':
         var HALF_YEAR_PERIOD = 365 * 24 * 60 * 60 * 1000 / 2;
+        filteredReviews = filteredReviews.filter(function(item) {
+          var sortDate = new Date(item.date.replace(/-/g, ', '));
+          var sortDateCurrent = new Date();
+          if (sortDate > new Date(sortDateCurrent - HALF_YEAR_PERIOD)) {
+            return item;
+          }
+        });
         filteredReviews = filteredReviews.sort(function(a, b) {
           var sortDateOne = new Date(a.date.replace(/-/g, ', '));
           var sortDateTwo = new Date(b.date.replace(/-/g, ', '));
@@ -156,16 +162,14 @@
             return 0;
           }
         });
-        filteredReviews = filteredReviews.filter(function(item) {
-          var sortDate = new Date(item.date.replace(/-/g, ', '));
-          var sortDateCurrent = new Date();
-          if (sortDate > new Date(sortDateCurrent - HALF_YEAR_PERIOD)) {
-            return item;
-          }
-        });
         break;
 
       case 'reviews-good':
+        filteredReviews = filteredReviews.filter(function(item) {
+          if (+item.rating > 2) {
+            return item;
+          }
+        });
         filteredReviews = filteredReviews.sort(function(a, b) {
           if (a.rating > b.rating) {
             return -1;
@@ -179,30 +183,25 @@
             return 0;
           }
         });
-        filteredReviews = filteredReviews.filter(function(item) {
-          if (+item.rating > 2) {
-            return item;
-          }
-        });
         break;
 
       case 'reviews-bad':
+        filteredReviews = filteredReviews.filter(function(item) {
+          if (+item.rating < 3) {
+            return item;
+          }
+        });
         filteredReviews = filteredReviews.sort(function(a, b) {
-          if ((a.rating < b.rating) || (b.rating === 0)) {
+          if ((a.rating < b.rating) && (a.rating !== 0) || (b.rating === 0)) {
             return -1;
           }
 
-          if ((a.rating > b.rating) || (a.rating === 0)) {
+          if ((a.rating > b.rating) && (b.rating !== 0) || (a.rating === 0) ) {
             return 1;
           }
 
           if (a.rating === b.rating) {
             return 0;
-          }
-        });
-        filteredReviews = filteredReviews.filter(function(item) {
-          if (+item.rating < 3) {
-            return item;
           }
         });
         break;
