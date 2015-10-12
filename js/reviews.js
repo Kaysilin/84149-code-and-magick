@@ -11,6 +11,7 @@
   };
 
   var REQUEST_FAILURE_TIMEOUT = 10000;
+
   var PAGE_LENGTH = 3;
 
   var reviewsContainer = document.querySelector('.reviews-list');
@@ -63,29 +64,37 @@
     };
   }
 
+  /**
+   * Список отрисованных отзывов. Используется для обращения к каждому
+   * из отзывов для удаления его со страницы.
+   * @type {Array.<Review>}
+   */
+  var renderedReviews = [];
+
+  /**
+   * Выводит на страницу список отзывов постранично(поблочно).
+   * @param {Array.<Object>} reviewsAll
+   * @param {number} pageNumber
+   * @param {boolean=} replace
+   */
   function renderReviews(reviewsAll, pageNumber, replace) {
 
     replace = typeof replace !== 'undefined' ? replace : true;
     pageNumber = pageNumber || 0;
 
     if (replace) {
+      var elem;
+      while ((elem = renderedReviews.shift())) {
+        elem.unrender();
+      }
+
+      reviewsContainer.classList.remove('review-load-failure');
       reviewsFilter.classList.add('invisible');
       reviewsMore.classList.add('invisible');
-      reviewsContainer.innerHTML = '';
+      //reviewsContainer.innerHTML = '';
       pageNumber = 1;
     }
 
-    var reviewRatingClassName = {
-      '': 'review-rating-none',
-      '0': 'review-rating-none',
-      '1': 'review-rating-one',
-      '2': 'review-rating-two',
-      '3': 'review-rating-three',
-      '4': 'review-rating-four',
-      '5': 'review-rating-five'
-    };
-
-    var reviewTemplate = document.getElementById('review-template');
     var reviewsFragment = document.createDocumentFragment();
 
     var reviewsFrom = (pageNumber - 1) * PAGE_LENGTH;
@@ -93,36 +102,9 @@
     reviewsAll = reviewsAll.slice(reviewsFrom, reviewsTo);
 
     reviewsAll.forEach(function(review) {
-      var newReviewElement = reviewTemplate.content.children[0].cloneNode(true);
-
-      newReviewElement.querySelector('.review-rating').classList.add(reviewRatingClassName[review['rating']]);
-      newReviewElement.querySelector('.review-text').textContent = review['description'];
-
-      if (review['author']['picture']) {
-
-        var reviewImage = new Image();
-
-        reviewImage.src = review['author']['picture'];
-
-        var imageLoadTimeout = setTimeout(function() {
-          newReviewElement.classList.add('review-load-failure');
-        }, REQUEST_FAILURE_TIMEOUT);
-
-        reviewImage.onload = function() {
-          clearTimeout(imageLoadTimeout);
-          reviewImage.classList.add('review-author');
-          reviewImage.alt = review['author']['name'];
-          reviewImage.title = review['author']['name'];
-          reviewImage.height = reviewImage.width = '124';
-          newReviewElement.replaceChild(reviewImage, newReviewElement.querySelector('img'));
-        };
-
-        reviewImage.onerror = function() {
-          newReviewElement.classList.add('review-load-failure');
-        };
-      }
-
-      reviewsFragment.appendChild(newReviewElement);
+      var newReviewElement = new Review(review);
+      newReviewElement.render(reviewsFragment);
+      renderedReviews.push(newReviewElement);
     });
 
     reviewsContainer.appendChild(reviewsFragment);
@@ -134,6 +116,16 @@
     }
   }
 
+  /**
+   * Фильтрация списка отзывов. Принимает на вход список отзывов
+   * и ID фильтра. В зависимости от переданного ID применяет
+   * разные алгоритмы фильтрации. Возвращает отфильтрованный
+   * список и записывает примененный фильтр в localStorage.
+   * Не изменяет исходный массив.
+   * @param {Array.<Object>} reviewsAll
+   * @param {string} filterID
+   * @return {Array.<Object>}
+   */
   function filterReviews(reviewsAll, filterID) {
     var filteredReviews = reviewsAll.slice(0);
     switch (filterID) {
