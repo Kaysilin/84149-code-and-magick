@@ -97,9 +97,6 @@
     this._leftButton.removeEventListener('click', this._onLeftArrowClick);
     this._rightButton.removeEventListener('click', this._onRightArrowClick);
     document.body.removeEventListener('keydown', this._onDocumentKeyDown);
-
-    this._currentPhoto = -1;
-    this._photos = [];
   };
 
   Gallery.prototype._onCloseButtonClick = function() {
