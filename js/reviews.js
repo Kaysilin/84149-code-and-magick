@@ -1,3 +1,5 @@
+/* global Review: true */
+
 'use strict';
 
 (function() {
