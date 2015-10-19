@@ -1,9 +1,18 @@
-/* global Review: true */
+/*
+ global
+ Gallery: true
+ ReviewsCollection: true
+ ReviewView: true
+ */
 
 'use strict';
 
 (function() {
 
+  /**
+   * @type {Object.<number, number>}
+   */
+  /*
   var ReadyState = {
     'UNSENT': 0,
     'OPENED': 1,
@@ -11,102 +20,99 @@
     'LOADING': 3,
     'DONE': 4
   };
+  */
 
+  /**
+   * Время таймаута
+   * @const
+   * @type {number}
+   */
   var REQUEST_FAILURE_TIMEOUT = 10000;
 
+  /**
+   * Количество отзывов на странице
+   * @const
+   * @type {number}
+   */
   var PAGE_LENGTH = 3;
 
-  var reviewsContainer = document.querySelector('.reviews-list');
+  /*
+
   var reviewsFilter = document.querySelector('.reviews-filter');
   var reviewsMore = document.querySelector('.reviews-controls-more');
   var reviews;
   var currentReviews;
+   */
+  /**
+   * @type {number}
+   */
   var currentPage = 0;
 
-  reviewsFilter.classList.add('invisible');
-  reviewsMore.classList.add('invisible');
-
-  function showLoadFailure() {
-    reviewsContainer.classList.add('reviews-load-failure');
-  }
-
-  function loadReviews(callback) {
-    var xhr = new XMLHttpRequest();
-    xhr.timeout = REQUEST_FAILURE_TIMEOUT;
-    xhr.open('get', 'data/reviews.json');
-    xhr.send();
-
-    xhr.onreadystatechange = function(evt) {
-      var loadedXhr = evt.target;
-
-      switch (loadedXhr.readyState) {
-        case ReadyState.OPENED:
-        case ReadyState.HEADERS_RECEIVED:
-        case ReadyState.LOADING:
-          reviewsContainer.classList.add('reviews-list-loading');
-          break;
-
-        case ReadyState.DONE:
-        default:
-          if (loadedXhr.status === 200) {
-            var data = loadedXhr.response;
-            reviewsContainer.classList.remove('reviews-list-loading');
-            return callback(JSON.parse(data));
-          }
-
-          if (loadedXhr.status > 400) {
-            showLoadFailure();
-          }
-          break;
-      }
-    };
-
-    xhr.ontimeout = function() {
-      showLoadFailure();
-    };
-  }
+  /**
+   * Контейнер списка отзывов.
+   * @type {Element}
+   */
+  var reviewsContainer = document.querySelector('.reviews-list');
 
   /**
-   * Список отрисованных отзывов. Используется для обращения к каждому
-   * из отзывов для удаления его со страницы.
-   * @type {Array.<Review>}
+   * Контейнер списка фильтров.
+   * @type {Element}
    */
-  var renderedReviews = [];
+  var reviewsFilter = document.querySelector('.reviews-filter');
+
+  /**
+   * Кнопка Еще отзывы.
+   * @type {Element}
+   */
+  var reviewsMore = document.querySelector('.reviews-controls-more');
+  /**
+   * @type {ReviewsCollection}
+   */
+  var reviewsCollection = new ReviewsCollection();
+
+  /**
+   * @type {Array.<Object>}
+   */
+  var initiallyLoaded = [];
+
+  /**
+   * @type {Array.<ReviewView>}
+   */
+  var renderedViews = [];
 
   /**
    * Выводит на страницу список отзывов постранично(поблочно).
-   * @param {Array.<Object>} reviewsAll
    * @param {number} pageNumber
    * @param {boolean=} replace
    */
-  function renderReviews(reviewsAll, pageNumber, replace) {
 
+  function renderReviews(pageNumber, replace) {
     replace = typeof replace !== 'undefined' ? replace : true;
     pageNumber = pageNumber || 0;
 
-    if (replace) {
-      var elem;
-      while ((elem = renderedReviews.shift())) {
-        elem.unrender();
-      }
-
-      reviewsContainer.classList.remove('review-load-failure');
-      reviewsFilter.classList.add('invisible');
-      reviewsMore.classList.add('invisible');
-      //reviewsContainer.innerHTML = '';
-      pageNumber = 1;
-    }
-
     var reviewsFragment = document.createDocumentFragment();
-
     var reviewsFrom = (pageNumber - 1) * PAGE_LENGTH;
     var reviewsTo = reviewsFrom + PAGE_LENGTH;
-    reviewsAll = reviewsAll.slice(reviewsFrom, reviewsTo);
 
-    reviewsAll.forEach(function(review) {
-      var newReviewElement = new Review(review);
-      newReviewElement.render(reviewsFragment);
-      renderedReviews.push(newReviewElement);
+    if (replace) {
+      while (renderedViews.length) {
+        var viewToRemove = renderedViews.shift();
+        // Важная особенность представлений бэкбона: remove занимается только удалением
+        // обработчиков событий, по факту это метод, который нужен для того, чтобы
+        // подчистить память после удаления элемента из дома. Добавление/удаление
+        // элемента в DOM должно производиться вручную.
+        reviewsContainer.removeChild(viewToRemove.el);
+        viewToRemove.remove();
+      }
+    }
+
+    reviewsCollection.slice(reviewsFrom, reviewsTo).forEach(function(model) {
+      var view = new ReviewView({ model: model });
+      // render только создает элемент в памяти, после этого его нужно
+      // добавить в документ вручную.
+      view.render();
+      reviewsFragment.appendChild(view.el);
+      renderedViews.push(view);
     });
 
     reviewsContainer.appendChild(reviewsFragment);
@@ -119,39 +125,47 @@
   }
 
   /**
+   * Добавляет класс ошибки контейнеру с отзывами. Используется в случае,
+   * если произошла ошибка загрузки отзывов или загрузка прервалась
+   * по таймауту.
+   */
+  function showLoadFailure() {
+    reviewsContainer.classList.add('reviews-load-failure');
+    reviewsFilter.classList.add('invisible');
+    reviewsMore.classList.add('invisible');
+  }
+
+  /**
    * Фильтрация списка отзывов. Принимает на вход список отзывов
    * и ID фильтра. В зависимости от переданного ID применяет
    * разные алгоритмы фильтрации. Возвращает отфильтрованный
    * список и записывает примененный фильтр в localStorage.
    * Не изменяет исходный массив.
-   * @param {Array.<Object>} reviewsAll
    * @param {string} filterID
    * @return {Array.<Object>}
    */
-  function filterReviews(reviewsAll, filterID) {
-    var filteredReviews = reviewsAll.slice(0);
+  function filterReviews(filterID) {
+    var list = initiallyLoaded.slice(0);
+
     switch (filterID) {
       case 'reviews-recent':
         var HALF_YEAR_PERIOD = 365 * 24 * 60 * 60 * 1000 / 2;
-        filteredReviews = filteredReviews.filter(function(item) {
+        list.filter(function(item) {
           var sortDate = new Date(item.date.replace(/-/g, ', '));
           var sortDateCurrent = new Date();
           if (sortDate > new Date(sortDateCurrent - HALF_YEAR_PERIOD)) {
             return item;
           }
         });
-        filteredReviews = filteredReviews.sort(function(a, b) {
+        list.sort(function(a, b) {
           var sortDateOne = new Date(a.date.replace(/-/g, ', '));
           var sortDateTwo = new Date(b.date.replace(/-/g, ', '));
-
           if (sortDateOne < sortDateTwo) {
             return 1;
           }
-
           if (sortDateOne > sortDateTwo) {
             return -1;
           }
-
           if (sortDateOne === sortDateTwo) {
             return 0;
           }
@@ -159,20 +173,18 @@
         break;
 
       case 'reviews-good':
-        filteredReviews = filteredReviews.filter(function(item) {
+        list.filter(function(item) {
           if (+item.rating > 2) {
             return item;
           }
         });
-        filteredReviews = filteredReviews.sort(function(a, b) {
+        list.sort(function(a, b) {
           if (a.rating > b.rating) {
             return -1;
           }
-
           if (a.rating < b.rating) {
             return 1;
           }
-
           if (a.rating === b.rating) {
             return 0;
           }
@@ -180,20 +192,18 @@
         break;
 
       case 'reviews-bad':
-        filteredReviews = filteredReviews.filter(function(item) {
+        list.filter(function(item) {
           if (+item.rating < 3) {
             return item;
           }
         });
-        filteredReviews = filteredReviews.sort(function(a, b) {
+        list.sort(function(a, b) {
           if ((a.rating < b.rating) && (a.rating !== 0) || (b.rating === 0)) {
             return -1;
           }
-
           if ((a.rating > b.rating) && (b.rating !== 0) || (a.rating === 0) ) {
             return 1;
           }
-
           if (a.rating === b.rating) {
             return 0;
           }
@@ -201,36 +211,50 @@
         break;
 
       case 'reviews-popular':
-        filteredReviews = filteredReviews.sort(function(a, b) {
+        list.sort(function(a, b) {
           if (a['review-rating'] > b['review-rating']) {
             return -1;
           }
-
           if (a['review-rating'] < b['review-rating']) {
             return 1;
           }
-
           if (a['review-rating'] === b['review-rating']) {
             return 0;
           }
         });
-
         break;
 
       default:
-        filteredReviews = reviewsAll.slice(0);
+        list.slice(0);
         break;
     }
+
+    reviewsCollection.reset(list);
     localStorage.setItem('filterID', filterID);
-    return filteredReviews;
   }
 
+  /**
+   * Вызывает функцию фильтрации на списке отелей с переданным fitlerID
+   * и подсвечивает кнопку активного фильтра.
+   * @param {string} filterID
+   */
   function setActiveFilter(filterId) {
-    currentReviews = filterReviews(reviews, filterId);
+    filterReviews(filterId);
     currentPage = 0;
-    renderReviews(currentReviews, ++currentPage, true);
+    renderReviews(++currentPage, true);
   }
 
+  function isNextPageAvailable() {
+    return currentPage < Math.ceil(reviewsCollection.length / PAGE_LENGTH);
+  }
+
+  /**
+   * Инициализация подписки на клики по кнопкам фильтра.
+   * Используется делегирование событий: события обрабатываются на объекте,
+   * содержащем все фильтры, и в момент наступления события, проверяется,
+   * произошел ли клик по фильтру или нет и если да, то вызывается функция
+   * установки фильтра.
+   */
   function initFilters() {
     var filtersContainer = document.forms['reviews-filter'];
     filtersContainer['reviews'].value = localStorage.getItem('filterID');
@@ -241,21 +265,18 @@
     });
   }
 
-  initFilters();
-
-  loadReviews(function(loadedReviews) {
-    reviews = loadedReviews;
-    currentReviews = reviews;
-    setActiveFilter(localStorage.getItem('filterID'));
-  });
-
-  function isNextPageAvailable() {
-    return currentPage < Math.ceil(currentReviews.length / PAGE_LENGTH);
-  }
-
   reviewsMore.addEventListener('click', function() {
     if (isNextPageAvailable()) {
-      renderReviews(currentReviews, ++currentPage, false);
+      renderReviews(++currentPage, false);
     }
   });
+
+  reviewsCollection.fetch({ timeout: REQUEST_FAILURE_TIMEOUT }).success(function(loaded, state, jqXHR) {
+    initiallyLoaded = jqXHR.responseJSON;
+    initFilters();
+    setActiveFilter(localStorage.getItem('filterID') || 'sort-by-default');
+  }).fail(function() {
+    showLoadFailure();
+  });
+
 })();

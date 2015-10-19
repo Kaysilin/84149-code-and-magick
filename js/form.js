@@ -1,4 +1,5 @@
-"use strict";
+'use strict';
+
 (function() {
   var formContainer = document.querySelector('.overlay-container');
   var formOpenButton = document.querySelector('.reviews-controls-new');
@@ -34,9 +35,7 @@
       if (formReviewFieldsName.isVisible && formReviewFieldsText.isVisible) {
         formReviewFields.classList.add('invisible');
       }
-    }
-    else
-    {
+    } else {
       formReviewInputLabel.classList.remove('invisible');
       formReviewInputLabel.isVisible = 0;
       formReviewFields.classList.remove('invisible');
@@ -56,15 +55,14 @@
   };
 
   //Вопрос по структуре кода, у меня идет большой блок с лбъявлением переменны, потом в куче намешаны обработчики событий и вспомогательные функции, как их правильнее располагать?
-  var calculateDateExpire = function () {
+  var calculateDateExpire = function() {
     var dateCurrent = new Date();
     var dateBirthday = new Date(dateCurrent.getFullYear(), 8, 25);
     var dateBirthdayDelta = dateCurrent - dateBirthday;
-    if (+dateBirthdayDelta<0) {
+    if (+dateBirthdayDelta < 0) {
       dateBirthdayDelta = 31536000000 + dateBirthdayDelta;
     }
-    var dateExpire = new Date(+dateCurrent + +dateBirthdayDelta);
-    return dateExpire;
+    return new Date(+dateCurrent + +dateBirthdayDelta);
   };
 
   formElement.onsubmit = function(evt) {
@@ -73,29 +71,27 @@
       // Достаточно ли будет проверки на наличие свойства с учетом того, что атрибут булевый или нужно еще проверять на значение свойства равное true?
       if (formReviewMark[i].checked) {
         docCookies.removeItem('review-mark');
-        docCookies.setItem('review-mark',formReviewMark[i].value, calculateDateExpire());
+        docCookies.setItem('review-mark', formReviewMark[i].value, calculateDateExpire());
       }
     }
     docCookies.removeItem('review-name');
     docCookies.setItem('review-name', formReviewName.value, calculateDateExpire());
     // По заданию не очень было понятно, что входит в валидацию, в вебинаре рассматривался вариант исключительно с использованием новых атрибутов HTML5, тут в таком случае достаточно было добавить атрибуты required для инпутов, а на JS реализовать только дополнительное визуальное отображение названий незаполненных полей. Добавила предупреждение через alert на случай, если браузер не поддреживает атрибут required. Не знаю, на сколько такой вариант рабочий.
-    if (formReviewFieldsName.isVisible && formReviewFieldsText.isVisible)   {
+    if (formReviewFieldsName.isVisible && formReviewFieldsText.isVisible) {
       formElement.submit();
-    }
-    else
-    {
+    } else {
       alert('Не все поля формы заполнены');
     }
   };
 
-  var setCookiesValue = function () {
+  var setCookiesValue = function() {
 
     var cookieNameValue = docCookies.getItem('review-name');
     if (cookieNameValue) {
       formReviewName.value = cookieNameValue;
       validateForm(formReviewName, formReviewFieldsName);
     }
-    
+
     var cookieMarkValue = docCookies.getItem('review-mark');
     if (cookieMarkValue) {
       for (var i = 0; i < formReviewMark.length; i++) {

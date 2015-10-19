@@ -1,3 +1,5 @@
+/* global docCookies: true */
+
 'use strict';
 
 var docCookies = {

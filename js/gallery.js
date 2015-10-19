@@ -16,7 +16,7 @@
 
   /**
    * Функция, "зажимающая" переданное значение value между значениями
-   * min и max. Возвращает value которое будет не меньше min
+   * min и max. Возвращает value, которое будет не меньше min
    * и не больше max.
    * @param {number} value
    * @param {number} min
@@ -28,9 +28,9 @@
   }
 
   /**
-   * Конструктор объекта фотогалереи. Создает свойства, хранящие ссылки на элементы
-   * галереи, служебные данные (номер показанной фотографии и список фотографий)
-   * и фиксирует контекст у обработчиков событий.
+   * Конструктор объекта фотогалереи. Создает свойства, хранящие ссылки
+   * на элементы алереи, служебные данные (номер показанной фотографии
+   * и список фотографий) и фиксирует контекст у обработчиков событий.
    * @constructor
    */
   var Gallery = function() {
@@ -49,6 +49,11 @@
     this._onRightArrowClick = this._onRightArrowClick.bind(this);
   };
 
+  /**
+   * Записывает список ссылок на фото в приватное свойство _photos.
+   * Также добавляет число, отражающее коидчетсво элементов в галерее,
+   * в верстку.
+   */
   Gallery.prototype.setPhotos = function() {
     var galleryImages = document.querySelector('.photogallery').getElementsByTagName('img');
 
@@ -60,6 +65,13 @@
     totalImageNumber.innerHTML = this._photos.length.toString();
   };
 
+  /**
+   * Устанавливает номер фотографии, которую нужно показать, предварительно
+   * "зажав" его между 0 и количеством фотографий в галерее минус 1 (чтобы
+   * нельзя было показать фотографию номер -1 или номер 100 в массиве
+   * из четырех фотографий), и показывает ее на странице.
+   * @param {number} index
+   */
   Gallery.prototype.setCurrentPhoto = function(index) {
     index = clamp(index, 0, this._photos.length - 1);
 
@@ -83,6 +95,10 @@
     currentImageNumber.innerHTML = this._currentPhoto + 1;
   };
 
+  /**
+   * Показывает фотогалерею, убирая у контейнера класс invisible.
+   * Добавляет обработчики событий.
+   */
   Gallery.prototype.show = function() {
     this._element.classList.remove('invisible');
 
@@ -92,6 +108,10 @@
     document.body.addEventListener('keydown', this._onDocumentKeyDown);
   };
 
+  /**
+   * Скрывает фотогалерею, добавляя контейнеру класс invisible.
+   * Удаляет обработчики событий.
+   */
   Gallery.prototype.hide = function() {
     this._element.classList.add('invisible');
 
