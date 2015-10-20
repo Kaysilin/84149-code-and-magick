@@ -1,3 +1,5 @@
+/* global Review: true */
+
 'use strict';
 
 (function() {
@@ -11,6 +13,7 @@
   };
 
   var REQUEST_FAILURE_TIMEOUT = 10000;
+
   var PAGE_LENGTH = 3;
 
   var reviewsContainer = document.querySelector('.reviews-list');
@@ -48,8 +51,7 @@
           if (loadedXhr.status === 200) {
             var data = loadedXhr.response;
             reviewsContainer.classList.remove('reviews-list-loading');
-            return ( callback(JSON.parse(data)) );
-            // eslint требует скомбинировать callback с return
+            return callback(JSON.parse(data));
           }
 
           if (loadedXhr.status > 400) {
@@ -64,29 +66,37 @@
     };
   }
 
+  /**
+   * Список отрисованных отзывов. Используется для обращения к каждому
+   * из отзывов для удаления его со страницы.
+   * @type {Array.<Review>}
+   */
+  var renderedReviews = [];
+
+  /**
+   * Выводит на страницу список отзывов постранично(поблочно).
+   * @param {Array.<Object>} reviewsAll
+   * @param {number} pageNumber
+   * @param {boolean=} replace
+   */
   function renderReviews(reviewsAll, pageNumber, replace) {
 
     replace = typeof replace !== 'undefined' ? replace : true;
     pageNumber = pageNumber || 0;
 
     if (replace) {
+      var elem;
+      while ((elem = renderedReviews.shift())) {
+        elem.unrender();
+      }
+
+      reviewsContainer.classList.remove('review-load-failure');
       reviewsFilter.classList.add('invisible');
       reviewsMore.classList.add('invisible');
-      reviewsContainer.innerHTML = '';
+      //reviewsContainer.innerHTML = '';
       pageNumber = 1;
     }
 
-    var reviewRatingClassName = {
-      '': 'review-rating-none',
-      '0': 'review-rating-none',
-      '1': 'review-rating-one',
-      '2': 'review-rating-two',
-      '3': 'review-rating-three',
-      '4': 'review-rating-four',
-      '5': 'review-rating-five'
-    };
-
-    var reviewTemplate = document.getElementById('review-template');
     var reviewsFragment = document.createDocumentFragment();
 
     var reviewsFrom = (pageNumber - 1) * PAGE_LENGTH;
@@ -94,36 +104,9 @@
     reviewsAll = reviewsAll.slice(reviewsFrom, reviewsTo);
 
     reviewsAll.forEach(function(review) {
-      var newReviewElement = reviewTemplate.content.children[0].cloneNode(true);
-
-      newReviewElement.querySelector('.review-rating').classList.add(reviewRatingClassName[review['rating']]);
-      newReviewElement.querySelector('.review-text').textContent = review['description'];
-
-      if (review['author']['picture']) {
-
-        var reviewImage = new Image();
-
-        reviewImage.src = review['author']['picture'];
-
-        var imageLoadTimeout = setTimeout(function() {
-          newReviewElement.classList.add('review-load-failure');
-        }, REQUEST_FAILURE_TIMEOUT);
-
-        reviewImage.onload = function() {
-          clearTimeout(imageLoadTimeout);
-          reviewImage.classList.add('review-author');
-          reviewImage.alt = review['author']['name'];
-          reviewImage.title = review['author']['name'];
-          reviewImage.height = reviewImage.width = '124';
-          newReviewElement.replaceChild(reviewImage, newReviewElement.querySelector('img'));
-        };
-
-        reviewImage.onerror = function() {
-          newReviewElement.classList.add('review-load-failure');
-        };
-      }
-
-      reviewsFragment.appendChild(newReviewElement);
+      var newReviewElement = new Review(review);
+      newReviewElement.render(reviewsFragment);
+      renderedReviews.push(newReviewElement);
     });
 
     reviewsContainer.appendChild(reviewsFragment);
@@ -135,11 +118,28 @@
     }
   }
 
+  /**
+   * Фильтрация списка отзывов. Принимает на вход список отзывов
+   * и ID фильтра. В зависимости от переданного ID применяет
+   * разные алгоритмы фильтрации. Возвращает отфильтрованный
+   * список и записывает примененный фильтр в localStorage.
+   * Не изменяет исходный массив.
+   * @param {Array.<Object>} reviewsAll
+   * @param {string} filterID
+   * @return {Array.<Object>}
+   */
   function filterReviews(reviewsAll, filterID) {
     var filteredReviews = reviewsAll.slice(0);
     switch (filterID) {
       case 'reviews-recent':
         var HALF_YEAR_PERIOD = 365 * 24 * 60 * 60 * 1000 / 2;
+        filteredReviews = filteredReviews.filter(function(item) {
+          var sortDate = new Date(item.date.replace(/-/g, ', '));
+          var sortDateCurrent = new Date();
+          if (sortDate > new Date(sortDateCurrent - HALF_YEAR_PERIOD)) {
+            return item;
+          }
+        });
         filteredReviews = filteredReviews.sort(function(a, b) {
           var sortDateOne = new Date(a.date.replace(/-/g, ', '));
           var sortDateTwo = new Date(b.date.replace(/-/g, ', '));
@@ -156,16 +156,14 @@
             return 0;
           }
         });
-        filteredReviews = filteredReviews.filter(function(item) {
-          var sortDate = new Date(item.date.replace(/-/g, ', '));
-          var sortDateCurrent = new Date();
-          if (sortDate > new Date(sortDateCurrent - HALF_YEAR_PERIOD)) {
-            return item;
-          }
-        });
         break;
 
       case 'reviews-good':
+        filteredReviews = filteredReviews.filter(function(item) {
+          if (+item.rating > 2) {
+            return item;
+          }
+        });
         filteredReviews = filteredReviews.sort(function(a, b) {
           if (a.rating > b.rating) {
             return -1;
@@ -179,30 +177,25 @@
             return 0;
           }
         });
-        filteredReviews = filteredReviews.filter(function(item) {
-          if (+item.rating > 2) {
-            return item;
-          }
-        });
         break;
 
       case 'reviews-bad':
+        filteredReviews = filteredReviews.filter(function(item) {
+          if (+item.rating < 3) {
+            return item;
+          }
+        });
         filteredReviews = filteredReviews.sort(function(a, b) {
-          if ((a.rating < b.rating) || (b.rating === 0)) {
+          if ((a.rating < b.rating) && (a.rating !== 0) || (b.rating === 0)) {
             return -1;
           }
 
-          if ((a.rating > b.rating) || (a.rating === 0)) {
+          if ((a.rating > b.rating) && (b.rating !== 0) || (a.rating === 0) ) {
             return 1;
           }
 
           if (a.rating === b.rating) {
             return 0;
-          }
-        });
-        filteredReviews = filteredReviews.filter(function(item) {
-          if (+item.rating < 3) {
-            return item;
           }
         });
         break;

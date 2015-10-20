@@ -1,52 +1,160 @@
+/* global Gallery: true */
+
 'use strict';
 
 (function() {
+  /**
+   * Список констант кодов нажатых клавиш для обработки
+   * клавиатурных событий.
+   * @enum {number}
+   */
   var Key = {
     'ESC': 27,
     'LEFT': 37,
     'RIGHT': 39
   };
 
-  var galleryContainer = document.querySelector('.photogallery');
-  var galleryOverlay = document.querySelector('.overlay-gallery');
-  var closeButton = galleryOverlay.querySelector('.overlay-gallery-close');
-
-  function closeHandler(evt) {
-    evt.preventDefault();
-    hideGallery();
+  /**
+   * Функция, "зажимающая" переданное значение value между значениями
+   * min и max. Возвращает value которое будет не меньше min
+   * и не больше max.
+   * @param {number} value
+   * @param {number} min
+   * @param {number} max
+   * @return {number}
+   */
+  function clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max);
   }
 
-  function hideGallery() {
-    galleryOverlay.classList.add('invisible');
-    closeButton.removeEventListener('click', closeHandler);
-    document.body.removeEventListener('keydown', keyHandler);
-  }
+  /**
+   * Конструктор объекта фотогалереи. Создает свойства, хранящие ссылки на элементы
+   * галереи, служебные данные (номер показанной фотографии и список фотографий)
+   * и фиксирует контекст у обработчиков событий.
+   * @constructor
+   */
+  var Gallery = function() {
+    this._element = document.querySelector('.overlay-gallery');
+    this._closeButton = this._element.querySelector('.overlay-gallery-close');
+    this._leftButton = this._element.querySelector('.overlay-gallery-control-left');
+    this._rightButton = this._element.querySelector('.overlay-gallery-control-right');
+    this._pictureElement = this._element.querySelector('.overlay-gallery-preview');
 
-  function showGallery() {
-    galleryOverlay.classList.remove('invisible');
-    closeButton.addEventListener('click', closeHandler);
-    document.body.addEventListener('keydown', keyHandler);
-  }
+    this._currentPhoto = -1;
+    this._photos = [];
 
-  function keyHandler(evt) {
+    this._onCloseButtonClick = this._onCloseButtonClick.bind(this);
+    this._onDocumentKeyDown = this._onDocumentKeyDown.bind(this);
+    this._onLeftArrowClick = this._onLeftArrowClick.bind(this);
+    this._onRightArrowClick = this._onRightArrowClick.bind(this);
+  };
+
+  /**
+   * @param {Array.<string>} aPhotos
+   */
+  Gallery.prototype.setPhotos = function(aPhotos) {
+    this._photos = aPhotos;
+
+    var totalImageNumber = this._element.querySelector('.preview-number-total');
+    totalImageNumber.innerHTML = this._photos.length.toString();
+  };
+
+  /**
+   * @param {number} index
+   */
+  Gallery.prototype.setCurrentPhoto = function(index) {
+    index = clamp(index, 0, this._photos.length - 1);
+
+    if ((this._currentPhoto === index) || (index === -1)) {
+      return;
+    }
+    this._currentPhoto = index;
+
+    this._pictureElement.style.backgroundImage = 'url(\'' + this._photos[this._currentPhoto] + '\')';
+    this._pictureElement.style.backgroundRepeat = 'no-repeat';
+
+    var newImage = new Image();
+    newImage.src = this._photos[this._currentPhoto];
+    if (newImage.width > newImage.height) {
+      this._pictureElement.style.backgroundSize = 'auto 100%';
+    } else {
+      this._pictureElement.style.backgroundSize = '100% auto';
+    }
+
+    var currentImageNumber = this._element.querySelector('.preview-number-current');
+    currentImageNumber.innerHTML = this._currentPhoto + 1;
+  };
+
+  Gallery.prototype.show = function() {
+    this._element.classList.remove('invisible');
+
+    this._closeButton.addEventListener('click', this._onCloseButtonClick);
+    this._leftButton.addEventListener('click', this._onLeftArrowClick);
+    this._rightButton.addEventListener('click', this._onRightArrowClick);
+    document.body.addEventListener('keydown', this._onDocumentKeyDown);
+  };
+
+  Gallery.prototype.hide = function() {
+    this._element.classList.add('invisible');
+
+    this._closeButton.removeEventListener('click', this._onCloseButtonClick);
+    this._leftButton.removeEventListener('click', this._onLeftArrowClick);
+    this._rightButton.removeEventListener('click', this._onRightArrowClick);
+    document.body.removeEventListener('keydown', this._onDocumentKeyDown);
+  };
+
+  Gallery.prototype._onCloseButtonClick = function() {
+    this.hide();
+  };
+
+  Gallery.prototype._onLeftArrowClick = function() {
+    this.setCurrentPhoto(this._currentPhoto - 1);
+  };
+
+  Gallery.prototype._onRightArrowClick = function() {
+    this.setCurrentPhoto(this._currentPhoto + 1);
+  };
+
+  Gallery.prototype._onDocumentKeyDown = function(evt) {
     switch (evt.keyCode) {
       case Key.LEFT:
+        this.setCurrentPhoto(this._currentPhoto - 1);
         console.log('previous photo shown');
         break;
       case Key.RIGHT:
+        this.setCurrentPhoto(this._currentPhoto + 1);
         console.log('next photo shown');
         break;
       case Key.ESC:
-        hideGallery();
+        this.hide();
         break;
       default: break;
     }
-  }
+  };
+
+  window.Gallery = Gallery;
+
+  var galleryContainer = document.querySelector('.photogallery');
+
+  /**
+   * @return {Array.<string>}
+   */
+  var getPhotos = function() {
+    return Array.prototype.map.call(galleryContainer.querySelectorAll('.photogallery-image img'), function(pictureNode) {
+      return pictureNode.src;
+    });
+  };
 
   galleryContainer.addEventListener('click', function(evt) {
     evt.preventDefault();
     if (evt.target.localName === 'img') {
-      showGallery();
+      if (!newGallery) {
+        var newGallery = new Gallery();
+        newGallery.setPhotos(getPhotos());
+      }
+
+      newGallery.setCurrentPhoto(getPhotos().indexOf(evt.target.src));
+      newGallery.show();
     }
   });
 
