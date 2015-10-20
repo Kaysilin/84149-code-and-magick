@@ -15,13 +15,17 @@
     useful: function(inc) {
       inc = inc ? inc : 1;
       this.set('rate-review', 'yes');
-      this.set('review-rating', this['review-rating'] + inc);
+      console.log('useful ' + this.attributes['review-rating']);
+      this.set('review-rating', this.attributes['review-rating'] + inc);
+      console.log('useful+1 ' + this.attributes['review-rating']);
     },
 
     unuseful: function(dec) {
       dec = dec ? dec : 1;
       this.set('rate-review', 'no');
-      this.set('review-rating', this['review-rating'] - dec);
+      console.log('unuseful ' + this.attributes['review-rating']);
+      this.set('review-rating', this.attributes['review-rating'] - dec);
+      console.log('useful-1 ' + this.attributes['review-rating']);
     }
   });
 

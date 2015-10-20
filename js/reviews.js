@@ -146,12 +146,11 @@
    */
   function filterReviews(filterID) {
     var list = initiallyLoaded.slice(0);
-    console.log('list = ' + typeof list);
 
     switch (filterID) {
       case 'reviews-recent':
         var HALF_YEAR_PERIOD = 365 * 24 * 60 * 60 * 1000 / 2;
-        list.filter(function(item) {
+        list = list.filter(function(item) {
           var sortDate = new Date(item.date.replace(/-/g, ', '));
           var sortDateCurrent = new Date();
           if (sortDate > new Date(sortDateCurrent - HALF_YEAR_PERIOD)) {
@@ -159,7 +158,6 @@
             return item;
           }
         });
-        console.log(list);
         list.sort(function(a, b) {
           var sortDateOne = new Date(a.date.replace(/-/g, ', '));
           var sortDateTwo = new Date(b.date.replace(/-/g, ', '));
@@ -176,7 +174,7 @@
         break;
 
       case 'reviews-good':
-        list.filter(function(item) {
+        list = list.filter(function(item) {
           if (+item.rating > 2) {
             return item;
           }
@@ -195,7 +193,7 @@
         break;
 
       case 'reviews-bad':
-        list.filter(function(item) {
+        list = list.filter(function(item) {
           if (+item.rating < 3) {
             return item;
           }

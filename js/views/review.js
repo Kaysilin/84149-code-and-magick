@@ -75,7 +75,7 @@
       // Клонирование нового объекта для отзыва из шаблона и заполнение его реальными
       // данными, взятыми из свойства _data, созданного конструктором.
       this.el.appendChild(reviewTemplate.content.children[0].cloneNode(true));
-
+      console.log('render');
       this.el.querySelector('.review-rating').classList.add(reviewRatingClassName[this.model.get('rating')]);
       this.el.querySelector('.review-text').textContent = this.model.get('description');
 
