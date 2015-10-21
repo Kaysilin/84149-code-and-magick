@@ -1,4 +1,4 @@
-/* global Gallery: true */
+/* global Gallery: true, Backbone: true */
 
 'use strict';
 
@@ -27,6 +27,26 @@
     return Math.min(Math.max(value, min), max);
   }
 
+  var galleryModel = new Backbone.Model.extend({
+      initialize: function() {
+        this.set('rate-review', null);
+      }
+  });
+
+  var oGallery = new Backbone.Collection.extend({
+    model: galleryModel
+  });
+
+  window.oGallery = oGallery;
+  window.galleryModel = galleryModel;
+
+  var galleryImages = document.querySelector('.photogallery').getElementsByTagName('img');
+
+  for (var i = 0; i < galleryImages.length; i++) {
+    oGallery.push({
+      url: galleryImages[i]
+    });
+  }
   /**
    * Конструктор объекта фотогалереи. Создает свойства, хранящие ссылки
    * на элементы алереи, служебные данные (номер показанной фотографии
