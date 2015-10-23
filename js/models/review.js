@@ -6,26 +6,33 @@
   /**
    * @constructor
    * @extends {Backbone.Model}
+   * @global
    */
   var ReviewModel = Backbone.Model.extend({
+    /**
+     * Установка дефолтного маркера оценки отзыва
+     * @override
+     */
     initialize: function() {
       this.set('rate-review', null);
     },
 
+    /**
+     * Положительная оценка отзыва
+     * @override
+     */
     useful: function(inc) {
-      inc = inc ? inc : 1;
       this.set('rate-review', 'yes');
-      console.log('useful ' + this.attributes['review-rating']);
       this.set('review-rating', this.attributes['review-rating'] + inc);
-      console.log('useful+1 ' + this.attributes['review-rating']);
     },
 
+    /**
+     * Отрицательная оценка отзыва
+     * @override
+     */
     unuseful: function(dec) {
-      dec = dec ? dec : 1;
       this.set('rate-review', 'no');
-      console.log('unuseful ' + this.attributes['review-rating']);
       this.set('review-rating', this.attributes['review-rating'] - dec);
-      console.log('useful-1 ' + this.attributes['review-rating']);
     }
   });
 

@@ -7,6 +7,7 @@
    * @constructor
    * @param {Object} attributes
    * @param {Object} options
+   * @global
    */
   var ReviewsCollection = Backbone.Collection.extend({
     model: ReviewModel,

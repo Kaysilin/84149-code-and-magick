@@ -3,9 +3,23 @@
 'use strict';
 
 (function() {
-  var galleryView = new Backbone.View.extend({
-    el: this._pictureElement = this._element.querySelector('.overlay-gallery-preview'),
+  /**
+   * @constructor
+   * @extends {Backbone.View}
+   * @global
+   */
+  var GalleryView = Backbone.View.extend({
+    /**
+     * Тег, использующийся для элемента представления.
+     * @type {string}
+     * @override
+     */
+    tagName: 'div',
 
+    /**
+     * Отрисовка фото из галереи
+     * @override
+     */
     render: function() {
       this.el.style.backgroundImage = 'url(\'' + this.model.get('url') + '\')';
       this.el.style.backgroundRepeat = 'no-repeat';
@@ -17,8 +31,8 @@
       } else {
         this.el.style.backgroundSize = '100% auto';
       }
-
     }
   });
-  window.galleryView = galleryView;
+
+  window.GalleryView = GalleryView;
 })();

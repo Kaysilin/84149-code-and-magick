@@ -118,9 +118,8 @@
             this.model.useful(2);
           }
         } else {
-          this.model.useful();
+          this.model.useful(1);
         }
-        this.model.set('rate-review', 'yes');
       }
 
       if (clickedElement.classList.contains('review-quiz-answer-no')) {
@@ -129,13 +128,13 @@
             this.model.unuseful(2);
           }
         } else {
-          this.model.unuseful();
+          this.model.unuseful(1);
         }
-        this.model.set('rate-review', 'no');
       }
     },
 
     /**
+     * Обработчик статусаа загрузки изображения отзыва
      * @param {Event} evt
      * @private
      */
