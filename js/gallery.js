@@ -54,8 +54,9 @@
    * Также добавляет число, отражающее коидчетсво элементов в галерее,
    * в верстку.
    * @method setPhotos
+   * @param {Array.<string>} aPhotos
    */
-  Gallery.prototype.setPhotos = function() {
+  Gallery.prototype.setPhotos = function(aPhotos) {
     var galleryImages = document.querySelector('.photogallery').getElementsByTagName('img');
 
     for (var i = 0; i < galleryImages.length; i++) {
@@ -127,21 +128,21 @@
   };
 
   Gallery.prototype._onLeftArrowClick = function() {
-    this.setCurrentPhoto(clamp(this._currentPhoto - 1, 0, this._photos.length - 1));
+    this.setCurrentPhoto(this._currentPhoto - 1);
   };
 
   Gallery.prototype._onRightArrowClick = function() {
-    this.setCurrentPhoto(clamp(this._currentPhoto + 1, 0, this._photos.length - 1));
+    this.setCurrentPhoto(this._currentPhoto + 1);
   };
 
   Gallery.prototype._onDocumentKeyDown = function(evt) {
     switch (evt.keyCode) {
       case Key.LEFT:
-        this.setCurrentPhoto(clamp(this._currentPhoto - 1, 0, this._photos.length - 1));
+        this.setCurrentPhoto(this._currentPhoto - 1);
         console.log('previous photo shown');
         break;
       case Key.RIGHT:
-        this.setCurrentPhoto(clamp(this._currentPhoto + 1, 0, this._photos.length - 1));
+        this.setCurrentPhoto(this._currentPhoto + 1);
         console.log('next photo shown');
         break;
       case Key.ESC:
@@ -155,18 +156,24 @@
 
   var galleryContainer = document.querySelector('.photogallery');
 
+  /**
+   * @return {Array.<string>}
+   */
+  var getPhotos = function() {
+    return Array.prototype.map.call(galleryContainer.querySelectorAll('.photogallery-image img'), function(pictureNode) {
+      return pictureNode.src;
+    });
+  };
+
   galleryContainer.addEventListener('click', function(evt) {
     evt.preventDefault();
     if (evt.target.localName === 'img') {
       if (!newGallery) {
         var newGallery = new Gallery();
-        newGallery.setPhotos();
+        newGallery.setPhotos(getPhotos());
       }
 
-      var currentPhoto = galleryContainer.querySelectorAll('.photogallery-image img');
-      var currentPhotoArr = Array.prototype.slice.call(currentPhoto);
-
-      newGallery.setCurrentPhoto(currentPhotoArr.indexOf(evt.target));
+      newGallery.setCurrentPhoto(getPhotos().indexOf(evt.target.src));
       newGallery.show();
     }
   });
