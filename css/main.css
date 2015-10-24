@@ -253,8 +253,17 @@ input[type=radio]:checked + .reviews-filter-item {
   cursor: pointer;
   display: inline-block;
   margin: 0 5px;
+  padding: 2px 5px;
   text-decoration: underline;
   vertical-align: middle;
+}
+
+.review-quiz-answer-checked {
+  background: #fff;
+  box-shadow: 5px 5px 0 rgba(0, 0, 0, 1);
+  color: #000;
+  text-decoration: none;
+  cursor: default;
 }
 
 .reviews-controls {

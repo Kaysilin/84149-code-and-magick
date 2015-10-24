@@ -1,5 +1,8 @@
 'use strict';
 
+/**
+ * @global
+ * */
 var docCookies = {
   getItem: function(sKey) {
     if (!sKey) {

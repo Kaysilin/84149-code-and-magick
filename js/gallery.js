@@ -1,4 +1,4 @@
-/* global Gallery: true */
+/* global GalleryView: true, Backbone: true */
 
 'use strict';
 
@@ -16,7 +16,7 @@
 
   /**
    * Функция, "зажимающая" переданное значение value между значениями
-   * min и max. Возвращает value которое будет не меньше min
+   * min и max. Возвращает value, которое будет не меньше min
    * и не больше max.
    * @param {number} value
    * @param {number} min
@@ -28,9 +28,9 @@
   }
 
   /**
-   * Конструктор объекта фотогалереи. Создает свойства, хранящие ссылки на элементы
-   * галереи, служебные данные (номер показанной фотографии и список фотографий)
-   * и фиксирует контекст у обработчиков событий.
+   * Конструктор объекта фотогалереи. Создает свойства, хранящие ссылки
+   * на элементы алереи, служебные данные (номер показанной фотографии
+   * и список фотографий) и фиксирует контекст у обработчиков событий.
    * @constructor
    */
   var Gallery = function() {
@@ -41,7 +41,7 @@
     this._pictureElement = this._element.querySelector('.overlay-gallery-preview');
 
     this._currentPhoto = -1;
-    this._photos = [];
+    this._photos = new Backbone.Collection();
 
     this._onCloseButtonClick = this._onCloseButtonClick.bind(this);
     this._onDocumentKeyDown = this._onDocumentKeyDown.bind(this);
@@ -50,16 +50,30 @@
   };
 
   /**
+   * Записывает список ссылок на фото в приватное свойство _photos.
+   * Также добавляет число, отражающее коидчетсво элементов в галерее,
+   * в верстку.
+   * @method setPhotos
    * @param {Array.<string>} aPhotos
    */
   Gallery.prototype.setPhotos = function(aPhotos) {
-    this._photos = aPhotos;
+    for (var i = 0; i < aPhotos.length; i++) {
+      this._photos.add({
+        url: aPhotos[i]
+      });
+      console.log(this._photos);
+    }
 
     var totalImageNumber = this._element.querySelector('.preview-number-total');
     totalImageNumber.innerHTML = this._photos.length.toString();
   };
 
   /**
+   * Устанавливает номер фотографии, которую нужно показать, предварительно
+   * "зажав" его между 0 и количеством фотографий в галерее минус 1 (чтобы
+   * нельзя было показать фотографию номер -1 или номер 100 в массиве
+   * из четырех фотографий), и показывает ее на странице.
+   * @method setCurrentPhoto
    * @param {number} index
    */
   Gallery.prototype.setCurrentPhoto = function(index) {
@@ -70,21 +84,21 @@
     }
     this._currentPhoto = index;
 
-    this._pictureElement.style.backgroundImage = 'url(\'' + this._photos[this._currentPhoto] + '\')';
-    this._pictureElement.style.backgroundRepeat = 'no-repeat';
+    var galleryView = new GalleryView({model: this._photos.at(this._currentPhoto)});
 
-    var newImage = new Image();
-    newImage.src = this._photos[this._currentPhoto];
-    if (newImage.width > newImage.height) {
-      this._pictureElement.style.backgroundSize = 'auto 100%';
-    } else {
-      this._pictureElement.style.backgroundSize = '100% auto';
-    }
+    galleryView.setElement(this._pictureElement);
+
+    galleryView.render();
 
     var currentImageNumber = this._element.querySelector('.preview-number-current');
     currentImageNumber.innerHTML = this._currentPhoto + 1;
   };
 
+  /**
+   * Показывает фотогалерею, убирая у контейнера класс invisible.
+   * Добавляет обработчики событий.
+   * @method show
+   */
   Gallery.prototype.show = function() {
     this._element.classList.remove('invisible');
 
@@ -94,6 +108,11 @@
     document.body.addEventListener('keydown', this._onDocumentKeyDown);
   };
 
+  /**
+   * Скрывает фотогалерею, добавляя контейнеру класс invisible.
+   * Удаляет обработчики событий.
+   * @method hide
+   */
   Gallery.prototype.hide = function() {
     this._element.classList.add('invisible');
 

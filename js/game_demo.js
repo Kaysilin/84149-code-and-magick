@@ -13,6 +13,7 @@
 
   function initScroll() {
     var timeoutDisappear;
+
     window.addEventListener('scroll', function() {
       var TIMEOUT = 100;
 
@@ -22,16 +23,22 @@
 
     });
 
+    window.addEventListener('cloudsdisappear', function() {
+      parallaxActive = 0;
+    });
+
+    window.addEventListener('cloudsappear', function() {
+      parallaxActive = 1;
+    });
+
     function doCloudDisappear() {
       var elementCloudsPosition = elementClouds.getBoundingClientRect();
       if (elementCloudsPosition.bottom <= 0) {
         window.dispatchEvent(new CustomEvent('cloudsdisappear'));
+      } else {
+        window.dispatchEvent(new CustomEvent('cloudsappear'));
       }
     }
-
-    window.addEventListener('cloudsdisappear', function() {
-      parallaxActive = 0;
-    });
   }
 
   initScroll();

@@ -4,6 +4,9 @@
   <meta charset="utf-8">
   <link href='https://fonts.googleapis.com/css?family=PT+Mono&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" href="css/main.css" media="screen" title="no title" charset="utf-8">
+  <script type="text/javascript" src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+  <script type="text/javascript" src="//underscorejs.org/underscore-min.js"></script>
+  <script type="text/javascript" src="//backbonejs.org/backbone-min.js"></script>
   <title>Code and Magick</title>
 </head>
 <body>
@@ -108,22 +111,26 @@
 
 
 <template id="review-template">
-  <article class="review">
+  <div>
     <img src="" class="review-author" alt="" title="" />
     <span class="review-rating"></span>
     <p class="review-text"></p>
     <div class="review-quiz">
       Полезный отзыв?
-      <span class="review-quiz-answer">Да</span>
-      <span class="review-quiz-answer">Нет</span>
+      <span class="review-quiz-answer review-quiz-answer-yes">Да</span>
+      <span class="review-quiz-answer review-quiz-answer-no">Нет</span>
     </div>
-  </article>
+  </div>
 </template>
 <script src="js/cookies.js"></script>
 <script src="js/form.js"></script>
-<script src="js/review.js"></script>
+<script src="js/models/review.js"></script>
+<script src="js/models/reviews.js"></script>
+<script src="js/views/review.js"></script>
+<!--<script src="js/review.js"></script>-->
 <script src="js/reviews.js"></script>
 <script src="js/game_demo.js"></script>
 <script src="js/gallery.js"></script>
+<script src="js/views/photo.js"></script>
 </body>
 </html>
