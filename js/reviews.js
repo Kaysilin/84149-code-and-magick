@@ -255,8 +255,6 @@
     }
   }
 
-  window.addEventListener('hashchange', parseURL);
-
   reviewsMore.addEventListener('click', function() {
     if (isNextPageAvailable()) {
       renderReviews(++currentPage, false);
@@ -265,6 +263,7 @@
 
   reviewsCollection.fetch({ timeout: REQUEST_FAILURE_TIMEOUT }).success(function(loaded, state, jqXHR) {
     initiallyLoaded = jqXHR.responseJSON;
+    window.addEventListener('hashchange', parseURL);
     initFilters();
   }).fail(function() {
     showLoadFailure();
