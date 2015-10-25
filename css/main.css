@@ -54,14 +54,24 @@ header {
   z-index: 0;
 }
 
-.header-wizard {
-  background: url('../img/wizard.gif') no-repeat;
+.header-fence {
+  background: url('../img/fence.gif') no-repeat;
   bottom: 0;
-  height: 90px;
+  height: 48px;
   left: 50%;
-  margin-left: -300px;
+  margin-left: -400px;
   position: absolute;
-  width: 93px;
+  width: 91px;
+}
+
+.header-tree {
+  background: url('../img/tree.gif') no-repeat;
+  bottom: 0;
+  height: 137px;
+  left: 50%;
+  margin-left: 300px;
+  position: absolute;
+  width: 120px;
 }
 
 .header-soon {
@@ -225,10 +235,10 @@ input[type=radio]:checked + .reviews-filter-item {
   background: url('../img/icon-star.png') top left repeat-x;
   display: block;
   height: 30px;
-  width: 0;
+  width: 30px;
 }
-.review-rating-none { }
-.review-rating-one { width: 30px; }
+
+.review-rating-one {  }
 .review-rating-two { width: 60px; }
 .review-rating-three { width: 90px; }
 .review-rating-four { width: 120px; }
@@ -263,7 +273,6 @@ input[type=radio]:checked + .reviews-filter-item {
   box-shadow: 5px 5px 0 rgba(0, 0, 0, 1);
   color: #000;
   text-decoration: none;
-  cursor: default;
 }
 
 .reviews-controls {
