@@ -377,17 +377,62 @@
      * Отрисовка экрана паузы.
      */
     _drawPauseScreen: function() {
+      var that = this;
+
+      var drawFrame = function() {
+        that.ctx.beginPath();
+        that.ctx.moveTo(350, 220);
+        that.ctx.lineTo(200, 210);
+        that.ctx.lineTo(200, 60);
+        that.ctx.lineTo(500, 60);
+        that.ctx.lineTo(500, 210);
+        that.ctx.closePath();
+        that.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        that.ctx.fill();
+        that.ctx.beginPath();
+        that.ctx.moveTo(340, 210);
+        that.ctx.lineTo(190, 200);
+        that.ctx.lineTo(190, 50);
+        that.ctx.lineTo(490, 50);
+        that.ctx.lineTo(490, 200);
+        that.ctx.closePath();
+        that.ctx.fillStyle = '#ffffff';
+        that.ctx.fill();
+      };
+
+      var verdictText = [];
+
+      var drawVerdict = function(verdicttext) {
+        that.ctx.fillStyle = '#000000';
+        that.ctx.font = '16px PT Mono';
+        verdicttext.forEach(function(item, i) {
+          that.ctx.fillText(item, 210, 100 + 20 * i);
+        });
+      };
+
       switch (this.state.currentStatus) {
         case Verdict.WIN:
+          drawFrame();
+          verdictText = ['Победа!', '', 'Чтобы я снова отправился', 'в путешествие, нажми пробел!'];
+          drawVerdict(verdictText);
           console.log('you have won!');
           break;
         case Verdict.FAIL:
+          drawFrame();
+          verdictText = ['Неудача!', '', 'Чтобы я снова отправился', 'в путешествие, нажми пробел!'];
+          drawVerdict(verdictText);
           console.log('you have failed!');
           break;
         case Verdict.PAUSE:
+          drawFrame();
+          verdictText = ['Пауза...', '', 'Чтобы я снова отправился', 'в путешествие, нажми пробел!'];
+          drawVerdict(verdictText);
           console.log('game is on pause!');
           break;
         case Verdict.INTRO:
+          drawFrame();
+          verdictText = ['Привет, я - Пендальф Синий!', '', 'Чтобы я отправился в первое', 'путешествие, нажми пробел!'];
+          drawVerdict(verdictText);
           console.log('welcome to the game! Press Space to start');
           break;
       }
@@ -664,8 +709,4 @@
 
   window.Game = Game;
   window.Game.Verdict = Verdict;
-
-  var game = new Game(document.querySelector('.demo'));
-  game.initializeLevelAndStart();
-  game.setGameStatus(Verdict.INTRO);
 })();
