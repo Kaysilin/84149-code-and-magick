@@ -1,3 +1,5 @@
+/* global docCookies: true */
+
 'use strict';
 
 (function() {
@@ -75,7 +77,7 @@
     if (formReviewFieldsName.isVisible && formReviewFieldsText.isVisible) {
       formElement.submit();
     } else {
-      alert('Не все поля формы заполнены');
+      //alert('Не все поля формы заполнены');
     }
   };
 

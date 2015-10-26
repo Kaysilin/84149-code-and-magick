@@ -2,7 +2,7 @@
 
 'use strict';
 
-(function() {
+define(function() {
   /**
    * @constructor
    * @extends {Backbone.Model}
@@ -36,5 +36,5 @@
     }
   });
 
-  window.ReviewModel = ReviewModel;
-})();
+  return ReviewModel;
+});

@@ -1,27 +1,9 @@
-/*
- global
- Gallery: true
- ReviewsCollection: true
- ReviewView: true
- */
-
 'use strict';
 
-(function() {
-
-  /**
-   * @type {Object.<number, number>}
-   */
-  /*
-  var ReadyState = {
-    'UNSENT': 0,
-    'OPENED': 1,
-    'HEADERS_RECEIVED': 2,
-    'LOADING': 3,
-    'DONE': 4
-  };
-  */
-
+define([
+  'models/reviews',
+  'views/review'
+], function(ReviewsCollection, ReviewView) {
   /**
    * Время таймаута
    * @const
@@ -36,13 +18,6 @@
    */
   var PAGE_LENGTH = 3;
 
-  /*
-
-  var reviewsFilter = document.querySelector('.reviews-filter');
-  var reviewsMore = document.querySelector('.reviews-controls-more');
-  var reviews;
-  var currentReviews;
-   */
   /**
    * @type {number}
    */
@@ -85,7 +60,6 @@
    * @param {number} pageNumber
    * @param {boolean=} replace
    */
-
   function renderReviews(pageNumber, replace) {
     replace = typeof replace !== 'undefined' ? replace : true;
     pageNumber = pageNumber || 0;
@@ -231,7 +205,6 @@
     }
 
     reviewsCollection.reset(list);
-    localStorage.setItem('filterID', filterID);
   }
 
   /**
@@ -258,12 +231,23 @@
    */
   function initFilters() {
     var filtersContainer = document.forms['reviews-filter'];
-    filtersContainer['reviews'].value = localStorage.getItem('filterID');
+    filtersContainer['reviews'].value = parseURL();
     filtersContainer.addEventListener('click', function(evt) {
       if (evt.target.name === 'reviews') {
-        setActiveFilter(evt.target.value);
+        location.hash = 'filters/' + evt.target.value;
       }
     });
+  }
+
+  function parseURL() {
+    var filterHash = location.hash.match(/^#filters\/(\S+)$/);
+    if (filterHash) {
+      setActiveFilter(filterHash[1]);
+      return filterHash[1];
+    } else {
+      setActiveFilter('sort-by-default');
+      return 'sort-by-default';
+    }
   }
 
   reviewsMore.addEventListener('click', function() {
@@ -274,10 +258,10 @@
 
   reviewsCollection.fetch({ timeout: REQUEST_FAILURE_TIMEOUT }).success(function(loaded, state, jqXHR) {
     initiallyLoaded = jqXHR.responseJSON;
+    window.addEventListener('hashchange', parseURL);
     initFilters();
-    setActiveFilter(localStorage.getItem('filterID') || 'sort-by-default');
   }).fail(function() {
     showLoadFailure();
   });
 
-})();
+});

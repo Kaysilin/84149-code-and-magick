@@ -1,6 +1,6 @@
 'use strict';
 
-(function() {
+define(function() {
   /**
    * @const
    * @type {number}
@@ -389,6 +389,7 @@
         that.ctx.closePath();
         that.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
         that.ctx.fill();
+
         that.ctx.beginPath();
         that.ctx.moveTo(340, 210);
         that.ctx.lineTo(190, 200);
@@ -706,7 +707,7 @@
     }
   };
 
+  Game.Verdict = Verdict;
 
-  window.Game = Game;
-  window.Game.Verdict = Verdict;
-})();
+  return Game;
+});
