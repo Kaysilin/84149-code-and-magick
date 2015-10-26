@@ -1,8 +1,10 @@
-/* global Backbone: true ReviewModel: true */
+/* global Backbone: true */
 
 'use strict';
 
-(function() {
+define([
+  'models/review'
+], function(ReviewModel) {
   /**
    * @constructor
    * @param {Object} attributes
@@ -14,5 +16,5 @@
     url: 'data/reviews.json'
   });
 
-  window.ReviewsCollection = ReviewsCollection;
-})();
+  return ReviewsCollection;
+});

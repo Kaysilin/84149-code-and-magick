@@ -2,7 +2,7 @@
 
 'use strict';
 
-(function() {
+define(function() {
   /**
    * @const
    * @type {number}
@@ -191,6 +191,5 @@
     }
   });
 
-  window.ReviewView = ReviewView;
-
-})();
+  return ReviewView;
+});
