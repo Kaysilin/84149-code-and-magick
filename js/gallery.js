@@ -1,8 +1,10 @@
-/* global GalleryView: true, Backbone: true */
+/* global Backbone: true */
 
 'use strict';
 
-(function() {
+define([
+  'views/photo'
+], function(GalleryView) {
   /**
    * Список констант кодов нажатых клавиш для обработки
    * клавиатурных событий.
@@ -61,7 +63,6 @@
       this._photos.add({
         url: aPhotos[i]
       });
-      console.log(this._photos);
     }
 
     var totalImageNumber = this._element.querySelector('.preview-number-total');
@@ -147,11 +148,10 @@
       case Key.ESC:
         this.hide();
         break;
-      default: break;
+      default:
+        break;
     }
   };
-
-  window.Gallery = Gallery;
 
   var galleryContainer = document.querySelector('.photogallery');
 
@@ -176,5 +176,4 @@
       newGallery.show();
     }
   });
-
-})();
+});

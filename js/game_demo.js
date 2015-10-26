@@ -1,8 +1,8 @@
-/* global Game: true, Verdict: true */
-
 'use strict';
 
-(function() {
+define([
+  'game'
+], function(Game) {
 
   var elementClouds = document.querySelector('.header-clouds');
   var parallaxActive = 1;
@@ -67,4 +67,4 @@
   var game = new Game(document.querySelector('.demo'));
   game.initializeLevelAndStart();
   game.setGameStatus(Game.Verdict.INTRO);
-})();
+});

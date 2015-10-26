@@ -1,13 +1,9 @@
-/*
- global
- Gallery: true
- ReviewsCollection: true
- ReviewView: true
- */
-
 'use strict';
 
-(function() {
+define([
+  'models/reviews',
+  'views/review'
+], function(ReviewsCollection, ReviewView) {
   /**
    * Время таймаута
    * @const
@@ -209,7 +205,6 @@
     }
 
     reviewsCollection.reset(list);
-    //localStorage.setItem('filterID', filterID);
   }
 
   /**
@@ -269,4 +264,4 @@
     showLoadFailure();
   });
 
-})();
+});

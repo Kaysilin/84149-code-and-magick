@@ -2,7 +2,7 @@
 
 'use strict';
 
-(function() {
+define(function() {
   /**
    * @constructor
    * @extends {Backbone.View}
@@ -34,5 +34,5 @@
     }
   });
 
-  window.GalleryView = GalleryView;
-})();
+  return GalleryView;
+});
