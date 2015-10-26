@@ -3,8 +3,9 @@
 'use strict';
 
 define([
-  'views/photo'
-], function(GalleryView) {
+  'views/photo',
+  'views/video'
+], function(GalleryView, GalleryVideoView) {
   /**
    * Список констант кодов нажатых клавиш для обработки
    * клавиатурных событий.
@@ -59,10 +60,20 @@ define([
    * @param {Array.<string>} aPhotos
    */
   Gallery.prototype.setPhotos = function(aPhotos) {
+    //console.dir(aPhotos);
     for (var i = 0; i < aPhotos.length; i++) {
-      this._photos.add({
-        url: aPhotos[i]
-      });
+      //console.log(aPhotos[i].dataset);
+      if (aPhotos[i].dataset.replacementVideo) {
+        this._photos.add({
+          url: aPhotos[i].dataset.replacementVideo,
+          preview: aPhotos[i].src
+        });
+      } else {
+        this._photos.add({
+          url: aPhotos[i].src
+        });
+      }
+      //console.dir(this._photos);
     }
 
     var totalImageNumber = this._element.querySelector('.preview-number-total');
@@ -78,6 +89,13 @@ define([
    * @param {number} index
    */
   Gallery.prototype.setCurrentPhoto = function(index) {
+    var videoContainer = this._pictureElement.getElementsByTagName('video')[0];
+    console.dir(videoContainer);
+    if (videoContainer) {
+      console.log('ig');
+      this._pictureElement.removeChild(videoContainer);
+    }
+
     index = clamp(index, 0, this._photos.length - 1);
 
     if ((this._currentPhoto === index) || (index === -1)) {
@@ -85,10 +103,14 @@ define([
     }
     this._currentPhoto = index;
 
-    var galleryView = new GalleryView({model: this._photos.at(this._currentPhoto)});
+    if (this._photos.at(this._currentPhoto).get('preview')) {
+      //console.log('preview');
+      galleryView = new GalleryVideoView({model: this._photos.at(this._currentPhoto)});
+    } else {
+      var galleryView = new GalleryView({model: this._photos.at(this._currentPhoto)});
+    }
 
     galleryView.setElement(this._pictureElement);
-
     galleryView.render();
 
     var currentImageNumber = this._element.querySelector('.preview-number-current');
@@ -160,7 +182,7 @@ define([
    */
   var getPhotos = function() {
     return Array.prototype.map.call(galleryContainer.querySelectorAll('.photogallery-image img'), function(pictureNode) {
-      return pictureNode.src;
+      return pictureNode;
     });
   };
 
@@ -172,7 +194,7 @@ define([
         newGallery.setPhotos(getPhotos());
       }
 
-      newGallery.setCurrentPhoto(getPhotos().indexOf(evt.target.src));
+      newGallery.setCurrentPhoto(getPhotos().indexOf(evt.target));
       newGallery.show();
     }
   });
