@@ -95,7 +95,8 @@ define([
       console.log('ig');
       this._pictureElement.removeChild(videoContainer);
     }
-
+    console.log(index);
+    console.log(this._currentPhoto);
     index = clamp(index, 0, this._photos.length - 1);
 
     if ((this._currentPhoto === index) || (index === -1)) {
