@@ -4,12 +4,14 @@
 
 define(function() {
   /**
+   * Таймаут на получение ответа на запрос
    * @const
    * @type {number}
    */
   var REQUEST_FAILURE_TIMEOUT = 10000;
 
   /**
+   * Маппинг рейтинга и классов для контейнера
    * @type {Object.<string, string>}
    */
   var reviewRatingClassName = {
@@ -23,6 +25,7 @@ define(function() {
   };
 
   /**
+   * Шаблон отзыва
    * @type {Element}
    */
   var reviewTemplate = document.getElementById('review-template');
@@ -110,8 +113,8 @@ define(function() {
       var clickedElement = evt.target;
 
       // Клик по оценке полезности отзыва, вызывает изменение
-      // рейтинга отзыва. Если ранее уже нажималась, старые изменения
-      // убираются, новые добавляются.
+      // рейтинга отзыва. Если ранее уже нажималась,
+      // старые изменения убираются, новые добавляются.
       if (clickedElement.classList.contains('review-quiz-answer-yes')) {
         if (this.model.get('rate-review')) {
           if (this.model.get('rate-review') === 'no') {
@@ -149,6 +152,7 @@ define(function() {
     },
 
     /**
+     * Обработчик неудачной загрузки изображения
      * @param {Event} evt
      * @private
      */
@@ -160,6 +164,7 @@ define(function() {
     },
 
     /**
+     * Обработчик изменени оценки отзыва
      * @private
      */
     _onModelUseful: function() {
@@ -167,6 +172,8 @@ define(function() {
     },
 
     /**
+     * Актуализация состояний кнопок оценки отзыва
+     * после клика полезный да/нет
      * @private
      */
     _updateUseful: function() {
