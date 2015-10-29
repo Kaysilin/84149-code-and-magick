@@ -659,7 +659,8 @@ define(function() {
     },
 
     /**
-     * @param {KeyboardEvent} evt [description]
+     * Обработчик клавиатурных событий.
+     * @param {KeyboardEvent} evt
      * @private
      */
     _onKeyDown: function(evt) {

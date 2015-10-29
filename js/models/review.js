@@ -6,7 +6,6 @@ define(function() {
   /**
    * @constructor
    * @extends {Backbone.Model}
-   * @global
    */
   var ReviewModel = Backbone.Model.extend({
     /**
@@ -20,6 +19,7 @@ define(function() {
     /**
      * Положительная оценка отзыва
      * @override
+     * @param {number} inc
      */
     useful: function(inc) {
       this.set('rate-review', 'yes');
@@ -29,6 +29,7 @@ define(function() {
     /**
      * Отрицательная оценка отзыва
      * @override
+     * @param {number} dec
      */
     unuseful: function(dec) {
       this.set('rate-review', 'no');

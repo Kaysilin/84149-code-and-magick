@@ -9,7 +9,7 @@ define([
    * @constructor
    * @param {Object} attributes
    * @param {Object} options
-   * @global
+   * @extends {Backbone.Collection}
    */
   var ReviewsCollection = Backbone.Collection.extend({
     model: ReviewModel,
