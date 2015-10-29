@@ -6,18 +6,10 @@ define(function() {
   /**
    * @constructor
    * @extends {Backbone.View}
-   * @global
    */
   var GalleryView = Backbone.View.extend({
     /**
-     * Тег, использующийся для элемента представления.
-     * @type {string}
-     * @override
-     */
-    tagName: 'div',
-
-    /**
-     * Отрисовка фото из галереи
+     * Отрисовка фото из галереи в оверлее
      * @override
      */
     render: function() {

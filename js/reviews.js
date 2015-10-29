@@ -40,6 +40,7 @@ define([
    * @type {Element}
    */
   var reviewsMore = document.querySelector('.reviews-controls-more');
+
   /**
    * @type {ReviewsCollection}
    */
@@ -56,7 +57,7 @@ define([
   var renderedViews = [];
 
   /**
-   * Выводит на страницу список отзывов постранично(поблочно).
+   * Выводит на страницу список отзывов поблочно.
    * @param {number} pageNumber
    * @param {boolean=} replace
    */
@@ -99,8 +100,9 @@ define([
   }
 
   /**
-   * Добавляет класс ошибки контейнеру с отзывами. Используется в случае,
-   * если произошла ошибка загрузки отзывов или загрузка прервалась
+   * Добавляет класс ошибки контейнеру с отзывами.
+   * Используется в случае, если произошла ошибка загрузки отзывов или
+   * загрузка прервалась
    * по таймауту.
    */
   function showLoadFailure() {
@@ -210,52 +212,70 @@ define([
   /**
    * Вызывает функцию фильтрации на списке отелей с переданным fitlerID
    * и подсвечивает кнопку активного фильтра.
-   * @param {string} filterID
+   * @param {string} filterId
    */
   function setActiveFilter(filterId) {
+    reviewsFilter['reviews'].value = filterId;
     filterReviews(filterId);
     currentPage = 0;
     renderReviews(++currentPage, true);
   }
 
+  /**
+   * Проверка наличия отзывов в коллекции для заполнения
+   * следующей страницы (блока)
+   * @returns {boolean}
+   */
   function isNextPageAvailable() {
     return currentPage < Math.ceil(reviewsCollection.length / PAGE_LENGTH);
   }
 
   /**
    * Инициализация подписки на клики по кнопкам фильтра.
-   * Используется делегирование событий: события обрабатываются на объекте,
-   * содержащем все фильтры, и в момент наступления события, проверяется,
-   * произошел ли клик по фильтру или нет и если да, то вызывается функция
-   * установки фильтра.
+   * Используется делегирование событий: события обрабатываются
+   * на объекте, содержащем все фильтры,
+   * * и в момент наступления события, проверяется,
+   * произошел ли клик по фильтру или нет и если да,
+   * то вызывается функция установки фильтра.
    */
   function initFilters() {
-    var filtersContainer = document.forms['reviews-filter'];
-    filtersContainer['reviews'].value = parseURL();
-    filtersContainer.addEventListener('click', function(evt) {
+    parseURL();
+    reviewsFilter.addEventListener('click', function(evt) {
       if (evt.target.name === 'reviews') {
         location.hash = 'filters/' + evt.target.value;
       }
     });
   }
 
+  /**
+   * Проверка наличия хеша, отвечающего за тип фильтра отзывов,
+   * в адресной строке.
+   * Если он есть, устанавливается соответствующий фильтр,
+   * если нет - дефолтный.
+   */
   function parseURL() {
     var filterHash = location.hash.match(/^#filters\/(\S+)$/);
     if (filterHash) {
       setActiveFilter(filterHash[1]);
-      return filterHash[1];
     } else {
       setActiveFilter('sort-by-default');
-      return 'sort-by-default';
     }
   }
 
+  /**
+   * Подписка на клики по кнопке Еще отзывы.
+   * Если доступна следующая страница - выводим следующий блок отзывов.
+   */
   reviewsMore.addEventListener('click', function() {
     if (isNextPageAvailable()) {
       renderReviews(++currentPage, false);
     }
   });
 
+  /**
+   * Получение списка отзывов из коллекции.
+   * В случае успеха проверка хеша и инициализация фильтров.
+   */
   reviewsCollection.fetch({ timeout: REQUEST_FAILURE_TIMEOUT }).success(function(loaded, state, jqXHR) {
     initiallyLoaded = jqXHR.responseJSON;
     window.addEventListener('hashchange', parseURL);

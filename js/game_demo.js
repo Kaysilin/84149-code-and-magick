@@ -7,12 +7,19 @@ define([
   var elementClouds = document.querySelector('.header-clouds');
   var parallaxActive = 1;
 
+  /**
+   * Пересчитывает положение облаков в зависимости от оффсета окна
+   * @param {number} isActive
+   */
   function doParallax(isActive) {
     if (isActive) {
       elementClouds.style.backgroundPosition = (window.pageYOffset * 0.8) + 'px 50%';
     }
   }
 
+  /**
+   * Инициализация обработчиков скролла, и событий которые они испускают.
+   */
   function initScroll() {
     var timeoutDisappear;
 
@@ -43,6 +50,11 @@ define([
       game.setGameStatus(Game.Verdict.CONTINUE);
     });
 
+    /**
+     * Проверка видимости блока с облаками:
+     * если виден - параллакс включен
+     * если не виден - праллакс выключен
+     */
     function doCloudDisappear() {
       var elementCloudsPosition = elementClouds.getBoundingClientRect();
       if (elementCloudsPosition.bottom <= 0) {
@@ -52,6 +64,11 @@ define([
       }
     }
 
+    /**
+     * Проверка видимости блока с игрой:
+     * если виден - игра активна
+     * если не виден - игра на паузу
+     */
     function doGamePause() {
       var elementGamePosition = document.querySelector('.demo canvas').getBoundingClientRect();
       if (elementGamePosition.bottom <= 0) {

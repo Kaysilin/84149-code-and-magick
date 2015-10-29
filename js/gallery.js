@@ -9,6 +9,7 @@ define([
   /**
    * Список констант кодов нажатых клавиш для обработки
    * клавиатурных событий.
+   * @readonly
    * @enum {number}
    */
   var Key = {
@@ -32,7 +33,7 @@ define([
 
   /**
    * Конструктор объекта фотогалереи. Создает свойства, хранящие ссылки
-   * на элементы алереи, служебные данные (номер показанной фотографии
+   * на элементы галереи, служебные данные (номер показанной фотографии
    * и список фотографий) и фиксирует контекст у обработчиков событий.
    * @constructor
    */
@@ -54,15 +55,16 @@ define([
 
   /**
    * Записывает список ссылок на фото в приватное свойство _photos.
-   * Также добавляет число, отражающее коидчетсво элементов в галерее,
-   * в верстку.
+   * Также добавляет число, отражающее количетсво элементов в галерее,
+   * в оверлей.
    * @method setPhotos
-   * @param {Array.<string>} aPhotos
+   * @param {Array.<object>} aPhotos
    */
   Gallery.prototype.setPhotos = function(aPhotos) {
     //console.dir(aPhotos);
+    //console.log(typeof aPhotos[0]);
+    ////нужно ли переделать итератор в forEach для соответствия доп. критериям?
     for (var i = 0; i < aPhotos.length; i++) {
-      //console.log(aPhotos[i].dataset);
       if (aPhotos[i].dataset.replacementVideo) {
         this._photos.add({
           url: aPhotos[i].dataset.replacementVideo,
@@ -73,7 +75,7 @@ define([
           url: aPhotos[i].src
         });
       }
-      //console.dir(this._photos);
+      console.log(this._photos);
     }
 
     var totalImageNumber = this._element.querySelector('.preview-number-total');
@@ -81,34 +83,40 @@ define([
   };
 
   /**
-   * Устанавливает номер фотографии, которую нужно показать, предварительно
-   * "зажав" его между 0 и количеством фотографий в галерее минус 1 (чтобы
-   * нельзя было показать фотографию номер -1 или номер 100 в массиве
-   * из четырех фотографий), и показывает ее на странице.
+   * Устанавливает номер фотографии, которую нужно показать,
+   * предварительно"зажав" его между 0 и количеством фотографий
+   * в галерее минус 1 (чтобы нельзя было показать фотографию
+   * номер -1 или номер 100 в массиве из четырех фотографий),
+   * и показывает ее на странице.
    * @method setCurrentPhoto
    * @param {number} index
    */
   Gallery.prototype.setCurrentPhoto = function(index) {
     var videoContainer = this._pictureElement.getElementsByTagName('video')[0];
-    console.dir(videoContainer);
+    //console.dir(videoContainer);
     if (videoContainer) {
-      console.log('ig');
+      //console.log('ig');
       this._pictureElement.removeChild(videoContainer);
     }
-    console.log(index);
-    console.log(this._currentPhoto);
+    //console.log(index);
+    //console.log(this._currentPhoto);
+    //console.dir(this._photos);
+    console.log('Длина коллекции' + this._photos.length);
+
     index = clamp(index, 0, this._photos.length - 1);
 
     if ((this._currentPhoto === index) || (index === -1)) {
       return;
     }
+
     this._currentPhoto = index;
 
+    var galleryView;
+
     if (this._photos.at(this._currentPhoto).get('preview')) {
-      //console.log('preview');
       galleryView = new GalleryVideoView({model: this._photos.at(this._currentPhoto)});
     } else {
-      var galleryView = new GalleryView({model: this._photos.at(this._currentPhoto)});
+      galleryView = new GalleryView({model: this._photos.at(this._currentPhoto)});
     }
 
     galleryView.setElement(this._pictureElement);
@@ -146,18 +154,36 @@ define([
     document.body.removeEventListener('keydown', this._onDocumentKeyDown);
   };
 
+  /**
+   * Обработчик кликов по кнопке закрытия галереи
+   * @private
+   */
   Gallery.prototype._onCloseButtonClick = function() {
     this.hide();
   };
 
+  /**
+   * Обработчик кликов по кнопке налево галереи
+   * @private
+   */
   Gallery.prototype._onLeftArrowClick = function() {
     this.setCurrentPhoto(this._currentPhoto - 1);
   };
 
+  /**
+   * Обработчик кликов по кнопке направо галереи
+   * @private
+   */
   Gallery.prototype._onRightArrowClick = function() {
     this.setCurrentPhoto(this._currentPhoto + 1);
   };
 
+  /**
+   * Обработчик клавиатурных событий в галерее.
+   * Прячет галерею при нажатии Esc,
+   * переключает фото при нажатии на стрелки.
+   * @private
+   */
   Gallery.prototype._onDocumentKeyDown = function(evt) {
     switch (evt.keyCode) {
       case Key.LEFT:
@@ -179,23 +205,31 @@ define([
   var galleryContainer = document.querySelector('.photogallery');
 
   /**
-   * @return {Array.<string>}
+   * Получение текущего массива фотографий галереи
+   * @return {Array.<Object>}
    */
-  var getPhotos = function() {
+  Gallery.prototype.getPhotos = function() {
     return Array.prototype.map.call(galleryContainer.querySelectorAll('.photogallery-image img'), function(pictureNode) {
       return pictureNode;
     });
   };
 
+  var newGallery;
+
+  /**
+   * Обработка клика по галерее. Выводит текущее фото.
+   * Если объект галереи пуст, создаем новый объект
+   * с помощью конструктора галереи и заполняем его фото.
+   */
   galleryContainer.addEventListener('click', function(evt) {
     evt.preventDefault();
     if (evt.target.localName === 'img') {
       if (!newGallery) {
-        var newGallery = new Gallery();
-        newGallery.setPhotos(getPhotos());
+        newGallery = new Gallery();
+        newGallery.setPhotos(newGallery.getPhotos());
       }
 
-      newGallery.setCurrentPhoto(getPhotos().indexOf(evt.target));
+      newGallery.setCurrentPhoto(newGallery.getPhotos().indexOf(evt.target));
       newGallery.show();
     }
   });

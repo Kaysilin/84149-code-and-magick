@@ -19,17 +19,31 @@
 
   // Изначально в файле в начале были объявлены переменные, уже дальше шел код. В итоге так у меня тоже основная масса переменных объявляется в начале, это правильно с точки зрения структуры и доступности кода?
 
+  /**
+   * Обработчик клика по кнопке открытия формы
+   * @param {MouseEvent} evt
+   */
   formOpenButton.onclick = function(evt) {
     evt.preventDefault();
     formContainer.classList.remove('invisible');
   };
 
+  /**
+   * Обработчик клика по кнопке закрытия формы
+   * @param {MouseEvent} evt
+   */
   formCloseButton.onclick = function(evt) {
     evt.preventDefault();
     formContainer.classList.add('invisible');
   };
 
+  /**
+   * Валидация данных, введенныз в поля формы
+   * @param {Object} formReviewInput
+   * @param {Object} formReviewInputLabel
+   */
   var validateForm = function(formReviewInput, formReviewInputLabel) {
+    console.log(typeof formReviewInput);
     if (formReviewInput.value) {
       formReviewInputLabel.classList.add('invisible');
       formReviewInputLabel.isVisible = 1;
@@ -43,16 +57,28 @@
     }
   };
 
+  /**
+   * Обработчик ввода данных в поле имя
+   * @param {Event} evt
+   */
   formReviewName.oninput = function(evt) {
     evt.preventDefault();
     validateForm(formReviewName, formReviewFieldsName);
   };
 
+  /**
+   * Обработчик ввода данных в поле отзыв
+   * @param {Event} evt
+   */
   formReviewText.oninput = function(evt) {
     evt.preventDefault();
     validateForm(formReviewText, formReviewFieldsText);
   };
 
+  /**
+   * Расчет срока жизни данных о отзыве в куки
+   * @returns {Date}
+   */
   var calculateDateExpire = function() {
     var dateCurrent = new Date();
     var dateBirthday = new Date(dateCurrent.getFullYear(), 8, 25);
@@ -63,6 +89,10 @@
     return new Date(+dateCurrent + +dateBirthdayDelta);
   };
 
+  /**
+   * Обработчик отправки формы
+   * @param {Event} evt
+   */
   formElement.onsubmit = function(evt) {
     evt.preventDefault();
     for (var i = 0; i < formReviewMark.length; i++) {
@@ -76,11 +106,12 @@
 
     if (formReviewFieldsName.isVisible && formReviewFieldsText.isVisible) {
       formElement.submit();
-    } else {
-      //alert('Не все поля формы заполнены');
     }
   };
 
+  /**
+   * Сохранение даннх об отзыве в куки
+   */
   var setCookiesValue = function() {
 
     var cookieNameValue = docCookies.getItem('review-name');
@@ -100,6 +131,9 @@
     }
   };
 
+  /**
+   * Обработчик загрузки body
+   */
   document.body.onload = function() {
     setCookiesValue();
   };
