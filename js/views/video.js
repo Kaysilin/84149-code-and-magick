@@ -29,13 +29,13 @@ define(function() {
      * @override
      */
     render: function() {
-      var galleryVideo = document.createElement('video');
-      galleryVideo.src = this.model.get('url');
-      galleryVideo.autoplay = true;
-      galleryVideo.loop = true;
-      galleryVideo.poster = this.model.get('preview');
+      this._galleryVideo = document.createElement('video');
+      this._galleryVideo.src = this.model.get('url');
+      this._galleryVideo.autoplay = true;
+      this._galleryVideo.loop = true;
+      this._galleryVideo.poster = this.model.get('preview');
       console.log(this.el);
-      this.el.appendChild(galleryVideo);
+      this.el.appendChild(this._galleryVideo);
       return this;
     },
 
@@ -50,6 +50,16 @@ define(function() {
       } else {
         evt.target.play();
       }
+    },
+
+    /**
+     * Удаление видео.
+     * @override
+     */
+    remove: function() {
+      this.el.removeChild(this._galleryVideo);
+      this.stopListening();
+      return this;
     }
   });
 
