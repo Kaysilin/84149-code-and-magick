@@ -23,6 +23,12 @@ define(function() {
       } else {
         this.el.style.backgroundSize = '100% auto';
       }
+    },
+
+    /** @override */
+    remove: function() {
+      this.stopListening();
+      return this;
     }
   });
 

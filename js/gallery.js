@@ -92,16 +92,16 @@ define([
    * @param {number} index
    */
   Gallery.prototype.setCurrentPhoto = function(index) {
-    var videoContainer = this._pictureElement.getElementsByTagName('video')[0];
+    // var videoContainer = this._pictureElement.getElementsByTagName('video')[0];
     //console.dir(videoContainer);
-    if (videoContainer) {
+    // if (videoContainer) {
       //console.log('ig');
-      this._pictureElement.removeChild(videoContainer);
-    }
-    //console.log(index);
+      // this._pictureElement.removeChild(videoContainer);
+    // }
+    // console.log(index);
     //console.log(this._currentPhoto);
     //console.dir(this._photos);
-    console.log('Длина коллекции' + this._photos.length);
+    // console.log('Длина коллекции' + this._photos.length);
 
     index = clamp(index, 0, this._photos.length - 1);
 
@@ -111,16 +111,20 @@ define([
 
     this._currentPhoto = index;
 
-    var galleryView;
+    // var galleryView;
 
-    if (this._photos.at(this._currentPhoto).get('preview')) {
-      galleryView = new GalleryVideoView({model: this._photos.at(this._currentPhoto)});
-    } else {
-      galleryView = new GalleryView({model: this._photos.at(this._currentPhoto)});
+    if (this._galleryView) {
+      this._galleryView.remove();
     }
 
-    galleryView.setElement(this._pictureElement);
-    galleryView.render();
+    if (this._photos.at(this._currentPhoto).get('preview')) {
+      this._galleryView = new GalleryVideoView({model: this._photos.at(this._currentPhoto)});
+    } else {
+      this._galleryView = new GalleryView({model: this._photos.at(this._currentPhoto)});
+    }
+
+    this._galleryView.setElement(this._pictureElement);
+    this._galleryView.render();
 
     var currentImageNumber = this._element.querySelector('.preview-number-current');
     currentImageNumber.innerHTML = this._currentPhoto + 1;
