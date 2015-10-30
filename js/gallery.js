@@ -197,8 +197,6 @@ define([
       case Key.ESC:
         this.hide();
         break;
-      default:
-        break;
     }
   };
 
