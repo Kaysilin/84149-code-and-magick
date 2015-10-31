@@ -122,7 +122,6 @@
       validateForm(formReviewName, formReviewFieldsName);
     }
     formReviewMark['review-mark'].value = docCookies.getItem('review-mark');
-    console.log(docCookies.getItem('review-mark'));
   };
 
   /**
