@@ -75,7 +75,6 @@ define([
           url: aPhotos[i].src
         });
       }
-      console.log(this._photos);
     }
 
     var totalImageNumber = this._element.querySelector('.preview-number-total');

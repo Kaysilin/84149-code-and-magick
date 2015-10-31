@@ -57,6 +57,12 @@ define([
   var renderedViews = [];
 
   /**
+   * Объект кэша для отфитрованных отзывов
+   * @type {Object}
+   */
+  var filteredReviewsCache = {};
+
+  /**
    * Выводит на страницу список отзывов поблочно.
    * @param {number} pageNumber
    * @param {boolean=} replace
@@ -117,90 +123,95 @@ define([
   function filterReviews(filterID) {
     var list = initiallyLoaded.slice(0);
 
-    switch (filterID) {
-      case 'reviews-recent':
-        var HALF_YEAR_PERIOD = 365 * 24 * 60 * 60 * 1000 / 2;
-        list = list.filter(function(item) {
-          var sortDate = new Date(item.date.replace(/-/g, ', '));
-          var sortDateCurrent = new Date();
-          if (sortDate > new Date(sortDateCurrent - HALF_YEAR_PERIOD)) {
-            console.log('filter');
-            return item;
-          }
-        });
-        list.sort(function(a, b) {
-          var sortDateOne = new Date(a.date.replace(/-/g, ', '));
-          var sortDateTwo = new Date(b.date.replace(/-/g, ', '));
-          if (sortDateOne < sortDateTwo) {
-            return 1;
-          }
-          if (sortDateOne > sortDateTwo) {
-            return -1;
-          }
-          if (sortDateOne === sortDateTwo) {
-            return 0;
-          }
-        });
-        break;
+    if (filteredReviewsCache[filterID]) {
+      reviewsCollection.reset(filteredReviewsCache[filterID]);
+      console.log('got from cache');
+    } else {
+      switch (filterID) {
+        case 'reviews-recent':
+          var HALF_YEAR_PERIOD = 365 * 24 * 60 * 60 * 1000 / 2;
+          list = list.filter(function (item) {
+            var sortDate = new Date(item.date.replace(/-/g, ', '));
+            var sortDateCurrent = new Date();
+            if (sortDate > new Date(sortDateCurrent - HALF_YEAR_PERIOD)) {
+              console.log('filter');
+              return item;
+            }
+          });
+          list.sort(function (a, b) {
+            var sortDateOne = new Date(a.date.replace(/-/g, ', '));
+            var sortDateTwo = new Date(b.date.replace(/-/g, ', '));
+            if (sortDateOne < sortDateTwo) {
+              return 1;
+            }
+            if (sortDateOne > sortDateTwo) {
+              return -1;
+            }
+            if (sortDateOne === sortDateTwo) {
+              return 0;
+            }
+          });
+          break;
 
-      case 'reviews-good':
-        list = list.filter(function(item) {
-          if (+item.rating > 2) {
-            return item;
-          }
-        });
-        list.sort(function(a, b) {
-          if (a.rating > b.rating) {
-            return -1;
-          }
-          if (a.rating < b.rating) {
-            return 1;
-          }
-          if (a.rating === b.rating) {
-            return 0;
-          }
-        });
-        break;
+        case 'reviews-good':
+          list = list.filter(function (item) {
+            if (+item.rating > 2) {
+              return item;
+            }
+          });
+          list.sort(function (a, b) {
+            if (a.rating > b.rating) {
+              return -1;
+            }
+            if (a.rating < b.rating) {
+              return 1;
+            }
+            if (a.rating === b.rating) {
+              return 0;
+            }
+          });
+          break;
 
-      case 'reviews-bad':
-        list = list.filter(function(item) {
-          if (+item.rating < 3) {
-            return item;
-          }
-        });
-        list.sort(function(a, b) {
-          if ((a.rating < b.rating) && (a.rating !== 0) || (b.rating === 0)) {
-            return -1;
-          }
-          if ((a.rating > b.rating) && (b.rating !== 0) || (a.rating === 0) ) {
-            return 1;
-          }
-          if (a.rating === b.rating) {
-            return 0;
-          }
-        });
-        break;
+        case 'reviews-bad':
+          list = list.filter(function (item) {
+            if (+item.rating < 3) {
+              return item;
+            }
+          });
+          list.sort(function (a, b) {
+            if ((a.rating < b.rating) && (a.rating !== 0) || (b.rating === 0)) {
+              return -1;
+            }
+            if ((a.rating > b.rating) && (b.rating !== 0) || (a.rating === 0)) {
+              return 1;
+            }
+            if (a.rating === b.rating) {
+              return 0;
+            }
+          });
+          break;
 
-      case 'reviews-popular':
-        list.sort(function(a, b) {
-          if (a['review-rating'] > b['review-rating']) {
-            return -1;
-          }
-          if (a['review-rating'] < b['review-rating']) {
-            return 1;
-          }
-          if (a['review-rating'] === b['review-rating']) {
-            return 0;
-          }
-        });
-        break;
+        case 'reviews-popular':
+          list.sort(function (a, b) {
+            if (a['review-rating'] > b['review-rating']) {
+              return -1;
+            }
+            if (a['review-rating'] < b['review-rating']) {
+              return 1;
+            }
+            if (a['review-rating'] === b['review-rating']) {
+              return 0;
+            }
+          });
+          break;
 
-      default:
-        list.slice(0);
-        break;
+        default:
+          list.slice(0);
+          break;
+      }
+      filteredReviewsCache[filterID] = list;
+      reviewsCollection.reset(list);
     }
-
-    reviewsCollection.reset(list);
   }
 
   /**
