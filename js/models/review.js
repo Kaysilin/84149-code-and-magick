@@ -14,26 +14,25 @@ define(function() {
      */
     initialize: function() {
       this.set('rate-review', null);
+      this._initialRating = this.get('review-rating');
     },
 
     /**
      * Положительная оценка отзыва
      * @override
-     * @param {number} inc
      */
-    useful: function(inc) {
-      this.set('rate-review', 'yes');
-      this.set('review-rating', this.attributes['review-rating'] + inc);
+    useful: function() {
+      this.set('rate-review', true);
+      this.set('review-rating', this._initialRating + 1);
     },
 
     /**
      * Отрицательная оценка отзыва
      * @override
-     * @param {number} dec
      */
-    unuseful: function(dec) {
-      this.set('rate-review', 'no');
-      this.set('review-rating', this.attributes['review-rating'] - dec);
+    unuseful: function() {
+      this.set('rate-review', false);
+      this.set('review-rating', this._initialRating - 1);
     }
   });
 

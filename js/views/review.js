@@ -78,7 +78,6 @@ define(function() {
       // Клонирование нового объекта для отзыва из шаблона и заполнение его реальными
       // данными, взятыми из свойства _data, созданного конструктором.
       this.el.appendChild(reviewTemplate.content.children[0].cloneNode(true));
-      console.log('render');
       this.el.querySelector('.review-rating').classList.add(reviewRatingClassName[this.model.get('rating')]);
       this.el.querySelector('.review-text').textContent = this.model.get('description');
 
@@ -115,25 +114,12 @@ define(function() {
       // Клик по оценке полезности отзыва, вызывает изменение
       // рейтинга отзыва. Если ранее уже нажималась,
       // старые изменения убираются, новые добавляются.
-      if (clickedElement.classList.contains('review-quiz-answer-yes')) {
-        if (this.model.get('rate-review')) {
-          if (this.model.get('rate-review') === 'no') {
-            this.model.useful(2);
-          }
-        } else {
-          this.model.useful(1);
-        }
+      if (clickedElement.classList.contains('review-quiz-answer-yes')) {      this.model.useful();
       }
 
       if (clickedElement.classList.contains('review-quiz-answer-no')) {
-        if (this.model.get('rate-review')) {
-          if (this.model.get('rate-review') === 'yes') {
-            this.model.unuseful(2);
-          }
-        } else {
-          this.model.unuseful(1);
-        }
-      }
+        this.model.unuseful();
+       }
     },
 
     /**
@@ -181,8 +167,8 @@ define(function() {
       var usefulButtonNo = this.el.querySelector('.review-quiz-answer-no');
 
       if (usefulButtonYes && usefulButtonNo) {
-        usefulButtonYes.classList.toggle('review-quiz-answer-checked', this.model.get('rate-review') === 'yes');
-        usefulButtonNo.classList.toggle('review-quiz-answer-checked', this.model.get('rate-review') === 'no');
+        usefulButtonYes.classList.toggle('review-quiz-answer-checked', this.model.get('rate-review') === true);
+        usefulButtonNo.classList.toggle('review-quiz-answer-checked', this.model.get('rate-review') === false);
       }
     },
 

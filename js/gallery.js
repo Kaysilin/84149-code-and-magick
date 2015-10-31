@@ -75,7 +75,6 @@ define([
           url: aPhotos[i].src
         });
       }
-      console.log(this._photos);
     }
 
     var totalImageNumber = this._element.querySelector('.preview-number-total');
@@ -92,17 +91,6 @@ define([
    * @param {number} index
    */
   Gallery.prototype.setCurrentPhoto = function(index) {
-    // var videoContainer = this._pictureElement.getElementsByTagName('video')[0];
-    //console.dir(videoContainer);
-    // if (videoContainer) {
-      //console.log('ig');
-      // this._pictureElement.removeChild(videoContainer);
-    // }
-    // console.log(index);
-    //console.log(this._currentPhoto);
-    //console.dir(this._photos);
-    // console.log('Длина коллекции' + this._photos.length);
-
     index = clamp(index, 0, this._photos.length - 1);
 
     if ((this._currentPhoto === index) || (index === -1)) {
@@ -110,8 +98,6 @@ define([
     }
 
     this._currentPhoto = index;
-
-    // var galleryView;
 
     if (this._galleryView) {
       this._galleryView.remove();
@@ -200,8 +186,6 @@ define([
         break;
       case Key.ESC:
         this.hide();
-        break;
-      default:
         break;
     }
   };
