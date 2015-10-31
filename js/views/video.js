@@ -58,6 +58,7 @@ define(function() {
     remove: function() {
       this.el.removeChild(this._galleryVideo);
       this.stopListening();
+      this.undelegateEvents();
       return this;
     }
   });

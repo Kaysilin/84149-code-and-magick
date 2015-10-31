@@ -7,7 +7,7 @@
   var formOpenButton = document.querySelector('.reviews-controls-new');
   var formCloseButton = document.querySelector('.review-form-close');
   var formElement = document.forms['review-form'];
-  var formReviewMark = document.querySelectorAll('.review-form-group-mark input');
+  var formReviewMark = document.querySelector('.review-form');
   var formReviewName = document.querySelector('#review-name');
   var formReviewText = document.querySelector('#review-text');
   var formReviewFields = document.querySelector('.review-fields');
@@ -119,16 +119,7 @@
       formReviewName.value = cookieNameValue;
       validateForm(formReviewName, formReviewFieldsName);
     }
-
-    var cookieMarkValue = docCookies.getItem('review-mark');
-    if (cookieMarkValue) {
-      for (var i = 0; i < formReviewMark.length; i++) {
-        formReviewMark[i].removeAttribute('checked');
-        if (cookieMarkValue === formReviewMark[i].value) {
-          formReviewMark[i].setAttribute('checked', 'true');
-        }
-      }
-    }
+    formReviewMark['review-mark'].value = docCookies.getItem('review-mark');
   };
 
   /**

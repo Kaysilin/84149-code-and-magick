@@ -460,6 +460,8 @@ textarea:invalid {
   display: inline-block;
   min-height: 300px;
   min-width: 300px;
+  max-height: 80%;
+  max-width: 80%;
   position: relative;
   vertical-align: middle;
 }
