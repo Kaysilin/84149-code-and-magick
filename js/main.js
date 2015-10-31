@@ -9,5 +9,4 @@ define([
   'gallery',
   'game_demo',
   'form'
-], function() {
-});
+]);

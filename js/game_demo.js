@@ -11,8 +11,8 @@ define([
    * Пересчитывает положение облаков в зависимости от оффсета окна
    * @param {number} isActive
    */
-  function doParallax(isActive) {
-    if (isActive) {
+  function doParallax() {
+    if (parallaxActive) {
       elementClouds.style.backgroundPosition = (window.pageYOffset * 0.8) + 'px 50%';
     }
   }
@@ -26,7 +26,7 @@ define([
     window.addEventListener('scroll', function() {
       var TIMEOUT = 100;
 
-      doParallax(parallaxActive);
+      doParallax();
       clearTimeout(timeoutDisappear);
       timeoutDisappear = setTimeout(function() {
         doCloudDisappear();
@@ -80,6 +80,7 @@ define([
   }
 
   initScroll();
+  doParallax();
 
   var game = new Game(document.querySelector('.demo'));
   game.initializeLevelAndStart();
