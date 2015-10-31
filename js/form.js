@@ -13,11 +13,6 @@
   var formReviewFields = document.querySelector('.review-fields');
   var formReviewFieldsName = document.querySelector('.review-fields-name');
   var formReviewFieldsText = document.querySelector('.review-fields-text');
-  // Добавила по одному дополнительному свойству в объекты, хранящие инпуты формы. Изначально до введения отдельной функции на валидацию формы были просто новые переменные-флаги, отвечающие за состояние, но потом при вынесении функционала в функцию, пришлось воспольщоваться именно дополнительными свойствами объектом. Можно ли так делать или могут быть какие-то побочные эффекты и лучше делать по-другому?
-  formReviewFieldsName.isVisible = 0;
-  formReviewFieldsText.isVisible = 0;
-
-  // Изначально в файле в начале были объявлены переменные, уже дальше шел код. В итоге так у меня тоже основная масса переменных объявляется в начале, это правильно с точки зрения структуры и доступности кода?
 
   /**
    * Обработчик клика по кнопке открытия формы
@@ -38,21 +33,28 @@
   };
 
   /**
-   * Валидация данных, введенныз в поля формы
+   * Проверка подсказок лейблов для полей формы
+   * на наличие класса, отвечающего за скрытие
+   * @param {Element} elem
+   * @returns {boolean}
+   */
+  var isInvisible = function(elem) {
+      return elem.classList.contains('invisible');
+  };
+
+  /**
+   * Валидация данных, введенных в поля формы
    * @param {Object} formReviewInput
    * @param {Object} formReviewInputLabel
    */
   var validateForm = function(formReviewInput, formReviewInputLabel) {
-    console.log(typeof formReviewInput);
     if (formReviewInput.value) {
       formReviewInputLabel.classList.add('invisible');
-      formReviewInputLabel.isVisible = 1;
-      if (formReviewFieldsName.isVisible && formReviewFieldsText.isVisible) {
+      if (isInvisible(formReviewFieldsName) && isInvisible(formReviewFieldsText)) {
         formReviewFields.classList.add('invisible');
       }
     } else {
       formReviewInputLabel.classList.remove('invisible');
-      formReviewInputLabel.isVisible = 0;
       formReviewFields.classList.remove('invisible');
     }
   };
@@ -104,7 +106,7 @@
     docCookies.removeItem('review-name');
     docCookies.setItem('review-name', formReviewName.value, calculateDateExpire());
 
-    if (formReviewFieldsName.isVisible && formReviewFieldsText.isVisible) {
+    if (isInvisible(formReviewFieldsName) && isInvisible(formReviewFieldsText)) {
       formElement.submit();
     }
   };
