@@ -72,19 +72,13 @@ define([
     if (replace) {
       while (renderedViews.length) {
         var viewToRemove = renderedViews.shift();
-        // Важная особенность представлений бэкбона: remove занимается только удалением
-        // обработчиков событий, по факту это метод, который нужен для того, чтобы
-        // подчистить память после удаления элемента из дома. Добавление/удаление
-        // элемента в DOM должно производиться вручную.
-        reviewsContainer.removeChild(viewToRemove.el);
+        //reviewsContainer.removeChild(viewToRemove.el);
         viewToRemove.remove();
       }
     }
 
     reviewsCollection.slice(reviewsFrom, reviewsTo).forEach(function(model) {
       var view = new ReviewView({ model: model });
-      // render только создает элемент в памяти, после этого его нужно
-      // добавить в документ вручную.
       view.render();
       reviewsFragment.appendChild(view.el);
       renderedViews.push(view);
@@ -101,8 +95,8 @@ define([
 
   /**
    * Добавляет класс ошибки контейнеру с отзывами.
-   * Используется в случае, если произошла ошибка загрузки отзывов или
-   * загрузка прервалась
+   * Используется в случае, если произошла ошибка
+   * загрузки отзывов или загрузка прервалась
    * по таймауту.
    */
   function showLoadFailure() {
@@ -258,7 +252,7 @@ define([
     if (filterHash) {
       setActiveFilter(filterHash[1]);
     } else {
-      setActiveFilter('sort-by-default');
+      setActiveFilter('reviews-all');
     }
   }
 
