@@ -128,14 +128,14 @@ define([
       switch (filterID) {
         case 'reviews-recent':
           var HALF_YEAR_PERIOD = 365 * 24 * 60 * 60 * 1000 / 2;
-          list = list.filter(function (item) {
+          list = list.filter(function(item) {
             var sortDate = new Date(item.date.replace(/-/g, ', '));
             var sortDateCurrent = new Date();
             if (sortDate > new Date(sortDateCurrent - HALF_YEAR_PERIOD)) {
               return item;
             }
           });
-          list.sort(function (a, b) {
+          list.sort(function(a, b) {
             var sortDateOne = new Date(a.date.replace(/-/g, ', '));
             var sortDateTwo = new Date(b.date.replace(/-/g, ', '));
             if (sortDateOne < sortDateTwo) {
@@ -151,12 +151,12 @@ define([
           break;
 
         case 'reviews-good':
-          list = list.filter(function (item) {
+          list = list.filter(function(item) {
             if (+item.rating > 2) {
               return item;
             }
           });
-          list.sort(function (a, b) {
+          list.sort(function(a, b) {
             if (a.rating > b.rating) {
               return -1;
             }
@@ -170,12 +170,12 @@ define([
           break;
 
         case 'reviews-bad':
-          list = list.filter(function (item) {
+          list = list.filter(function(item) {
             if (+item.rating < 3) {
               return item;
             }
           });
-          list.sort(function (a, b) {
+          list.sort(function(a, b) {
             if ((a.rating < b.rating) && (a.rating !== 0) || (b.rating === 0)) {
               return -1;
             }
@@ -189,7 +189,7 @@ define([
           break;
 
         case 'reviews-popular':
-          list.sort(function (a, b) {
+          list.sort(function(a, b) {
             if (a['review-rating'] > b['review-rating']) {
               return -1;
             }

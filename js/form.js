@@ -40,7 +40,7 @@
    * @returns {boolean}
    */
   var isInvisible = function(elem) {
-      return elem.classList.contains('invisible');
+    return elem.classList.contains('invisible');
   };
 
   /**

@@ -120,7 +120,7 @@ define(function() {
 
       if (clickedElement.classList.contains('review-quiz-answer-no')) {
         this.model.unuseful();
-       }
+      }
     },
 
     /**
