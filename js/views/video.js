@@ -34,6 +34,8 @@ define(function() {
       this._galleryVideo.autoplay = true;
       this._galleryVideo.loop = true;
       this._galleryVideo.poster = this.model.get('preview');
+      this._galleryVideo.style.maxHeight = document.documentElement.clientHeight - 150 + 'px';
+      this._galleryVideo.style.maxWidth = document.documentElement.clientWidth - 150 + 'px';
       this.el.appendChild(this._galleryVideo);
       return this;
     },

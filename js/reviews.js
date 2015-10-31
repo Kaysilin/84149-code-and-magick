@@ -78,7 +78,6 @@ define([
     if (replace) {
       while (renderedViews.length) {
         var viewToRemove = renderedViews.shift();
-        //reviewsContainer.removeChild(viewToRemove.el);
         viewToRemove.remove();
       }
     }
@@ -125,7 +124,6 @@ define([
 
     if (filteredReviewsCache[filterID]) {
       reviewsCollection.reset(filteredReviewsCache[filterID]);
-      console.log('got from cache');
     } else {
       switch (filterID) {
         case 'reviews-recent':
@@ -134,7 +132,6 @@ define([
             var sortDate = new Date(item.date.replace(/-/g, ', '));
             var sortDateCurrent = new Date();
             if (sortDate > new Date(sortDateCurrent - HALF_YEAR_PERIOD)) {
-              console.log('filter');
               return item;
             }
           });
