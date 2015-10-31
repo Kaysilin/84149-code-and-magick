@@ -21,6 +21,7 @@
   formOpenButton.onclick = function(evt) {
     evt.preventDefault();
     formContainer.classList.remove('invisible');
+    setCookiesValue();
   };
 
   /**
@@ -115,13 +116,13 @@
    * Сохранение даннх об отзыве в куки
    */
   var setCookiesValue = function() {
-
     var cookieNameValue = docCookies.getItem('review-name');
     if (cookieNameValue) {
       formReviewName.value = cookieNameValue;
       validateForm(formReviewName, formReviewFieldsName);
     }
     formReviewMark['review-mark'].value = docCookies.getItem('review-mark');
+    console.log(docCookies.getItem('review-mark'));
   };
 
   /**
