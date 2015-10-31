@@ -5,11 +5,10 @@ define([
 ], function(Game) {
 
   var elementClouds = document.querySelector('.header-clouds');
-  var parallaxActive = 1;
+  var parallaxActive = true;
 
   /**
    * Пересчитывает положение облаков в зависимости от оффсета окна
-   * @param {number} isActive
    */
   function doParallax() {
     if (parallaxActive) {
@@ -35,11 +34,11 @@ define([
     });
 
     window.addEventListener('cloudsdisappear', function() {
-      parallaxActive = 0;
+      parallaxActive = false;
     });
 
     window.addEventListener('cloudsappear', function() {
-      parallaxActive = 1;
+      parallaxActive = true;
     });
 
     window.addEventListener('gamepause', function() {

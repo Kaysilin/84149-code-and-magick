@@ -61,9 +61,6 @@ define([
    * @param {Array.<object>} aPhotos
    */
   Gallery.prototype.setPhotos = function(aPhotos) {
-    //console.dir(aPhotos);
-    //console.log(typeof aPhotos[0]);
-    ////нужно ли переделать итератор в forEach для соответствия доп. критериям?
     for (var i = 0; i < aPhotos.length; i++) {
       if (aPhotos[i].dataset.replacementVideo) {
         this._photos.add({
@@ -123,7 +120,6 @@ define([
    */
   Gallery.prototype.show = function() {
     this._element.classList.remove('invisible');
-
     this._closeButton.addEventListener('click', this._onCloseButtonClick);
     this._leftButton.addEventListener('click', this._onLeftArrowClick);
     this._rightButton.addEventListener('click', this._onRightArrowClick);
@@ -178,11 +174,9 @@ define([
     switch (evt.keyCode) {
       case Key.LEFT:
         this.setCurrentPhoto(this._currentPhoto - 1);
-        console.log('previous photo shown');
         break;
       case Key.RIGHT:
         this.setCurrentPhoto(this._currentPhoto + 1);
-        console.log('next photo shown');
         break;
       case Key.ESC:
         this.hide();

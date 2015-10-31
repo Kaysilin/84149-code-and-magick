@@ -416,25 +416,21 @@ define(function() {
           drawFrame();
           verdictText = ['Победа!', '', 'Чтобы я снова отправился', 'в путешествие, нажми пробел!'];
           drawVerdict(verdictText);
-          console.log('you have won!');
           break;
         case Verdict.FAIL:
           drawFrame();
           verdictText = ['Неудача!', '', 'Чтобы я снова отправился', 'в путешествие, нажми пробел!'];
           drawVerdict(verdictText);
-          console.log('you have failed!');
           break;
         case Verdict.PAUSE:
           drawFrame();
           verdictText = ['Пауза...', '', 'Чтобы я снова отправился', 'в путешествие, нажми пробел!'];
           drawVerdict(verdictText);
-          console.log('game is on pause!');
           break;
         case Verdict.INTRO:
           drawFrame();
           verdictText = ['Привет, я - Пендальф Синий!', '', 'Чтобы я отправился в первое', 'путешествие, нажми пробел!'];
           drawVerdict(verdictText);
-          console.log('welcome to the game! Press Space to start');
           break;
       }
     },

@@ -114,7 +114,8 @@ define(function() {
       // Клик по оценке полезности отзыва, вызывает изменение
       // рейтинга отзыва. Если ранее уже нажималась,
       // старые изменения убираются, новые добавляются.
-      if (clickedElement.classList.contains('review-quiz-answer-yes')) {      this.model.useful();
+      if (clickedElement.classList.contains('review-quiz-answer-yes')) {
+        this.model.useful();
       }
 
       if (clickedElement.classList.contains('review-quiz-answer-no')) {
@@ -123,7 +124,7 @@ define(function() {
     },
 
     /**
-     * Обработчик статусаа загрузки изображения отзыва
+     * Обработчик статуса загрузки изображения отзыва
      * @param {Event} evt
      * @private
      */
