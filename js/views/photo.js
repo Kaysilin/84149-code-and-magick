@@ -13,20 +13,15 @@ define(function() {
      * @override
      */
     render: function() {
-      this.el.style.backgroundImage = 'url(\'' + this.model.get('url') + '\')';
-      this.el.style.backgroundRepeat = 'no-repeat';
-
-      var newImage = new Image();
-      newImage.src = this.model.get('url');
-      if (newImage.width > newImage.height) {
-        this.el.style.backgroundSize = 'auto 100%';
-      } else {
-        this.el.style.backgroundSize = '100% auto';
-      }
+      this._galleryPhoto = document.createElement('img');
+      this._galleryPhoto.src = this.model.get('url');
+      this.el.appendChild(this._galleryPhoto);
+      return this;
     },
 
     /** @override */
     remove: function() {
+      this.el.removeChild(this._galleryPhoto);
       this.stopListening();
       return this;
     }

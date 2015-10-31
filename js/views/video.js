@@ -34,7 +34,6 @@ define(function() {
       this._galleryVideo.autoplay = true;
       this._galleryVideo.loop = true;
       this._galleryVideo.poster = this.model.get('preview');
-      console.log(this.el);
       this.el.appendChild(this._galleryVideo);
       return this;
     },
